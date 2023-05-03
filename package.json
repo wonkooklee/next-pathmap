@@ -1,0 +1,26 @@
+{
+  "name": "demo-npm-cli-tool",
+  "version": "1.0.5",
+  "description": "First npm CLI tool published",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "https://github.com/wonkooklee/demo-npm-cli-tool",
+  "homepage": "https://github.com/wonkooklee/demo-npm-cli-tool",
+  "bin": "./index.mjs",
+  "keywords": [
+    "cli",
+    "npmtool"
+  ],
+  "author": "Wonkook Lee",
+  "license": "ISC",
+  "dependencies": {
+    "globby": "^13.1.4",
+    "inquirer": "^9.2.0",
+    "json-format": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.3"
+  }
+}
