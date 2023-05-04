@@ -1,7 +1,7 @@
 {
   "name": "demo-npm-cli-tool",
   "license": "MIT",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "First npm CLI tool published",
   "repository": "wonkooklee/demo-npm-cli-tool",
   "author": {
@@ -13,9 +13,7 @@
     "node": ">=14.0.0"
   },
   "main": "src/index.js",
-  "scripts": {
-    "publish": "npm publish"
-  },
+  "scripts": {},
   "bin": "src/index.js",
   "keywords": [
     "cli",
