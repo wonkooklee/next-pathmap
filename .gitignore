@@ -1,1 +1,13 @@
+# IDE & editors
+.idea
+.vscode
+
+# Dependencies
 node_modules
+
+# Compiled and temporary files
+.tmp
+
+# Other files
+package-lock.json
+yarn.lock

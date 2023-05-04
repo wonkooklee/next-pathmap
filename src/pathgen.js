@@ -41,14 +41,6 @@ async function readExistPaths(pathToSave) {
 }
 
 export async function gen({ pathToPages, pathToSave, includes, excludes }) {
-  const saveDir = pathToSave.match(/(.*?)(?=\/.+$)/)[0];
-
-  if (!fs.existsSync(saveDir)) {
-    fs.mkdirSync(saveDir);
-  }
-
-  const existingPaths = await readExistPaths(pathToSave);
-
   const pages = await globby([...includes, ...excludes], {
     cwd: pathToPages || "src/pages",
     absolute: false,
@@ -57,7 +49,21 @@ export async function gen({ pathToPages, pathToSave, includes, excludes }) {
     objectMode: true,
   });
 
-  console.log(pages);
+  if (pages.length === 0) {
+    console.error(
+      "\x1b[41m",
+      "EXCEPTIONS: The given directory has no matched page files. (1002)"
+    );
+    process.exit(12);
+  }
+
+  const saveDir = pathToSave.match(/(.*?)(?=\/.+$)/)[0];
+
+  if (!fs.existsSync(saveDir)) {
+    fs.mkdirSync(saveDir);
+  }
+
+  const existingPaths = await readExistPaths(pathToSave);
 
   const parsedPaths = pages
     .map((page) => {
@@ -68,6 +74,12 @@ export async function gen({ pathToPages, pathToSave, includes, excludes }) {
     });
 
   console.log(parsedPaths);
+  console.log(
+    "\x1b[42m",
+    "SUCCESS: Pathmap file has been created successfully.",
+    "\x1b[0m"
+  );
+  console.log("\x1b[32m", `OUTPUT: ./${pathToSave}`, "\x1b[0m");
 
   fs.writeFile(
     pathToSave,
