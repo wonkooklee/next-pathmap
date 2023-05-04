@@ -3,6 +3,11 @@
 import inquirer from "inquirer";
 import { gen } from "./pathgen.js";
 
+if (process.stdout.isTTY === false) {
+  console.error("\x1b[41m", "ERROR: Something went wrong. (3000)", "\x1b[0m");
+  process.exit(1);
+}
+
 inquirer
   .prompt([
     {
@@ -66,7 +71,9 @@ inquirer
     },
   ])
   .then(async ({ pathToPages, pathToSave, includes, excludes }) => {
-    console.log({ pathToPages, pathToSave, includes: [includes], excludes });
+    console.log(pathToPages);
+    console.log(pathToSave);
+    validatePaths({ pathToPages, pathToSave });
     gen({
       pathToPages,
       pathToSave,
@@ -74,3 +81,28 @@ inquirer
       excludes,
     });
   });
+
+function validatePaths({ pathToPages, pathToSave }) {
+  const isValidPathToPages = /^((\/|\.|\.{2}|[\w\d]).+)?pages$/.test(
+    pathToPages
+  );
+  const isValidPathToSave = /^((\/|\.|\.{2}|[\w\d]).+)?[\w\d-]\.json$/.test(
+    pathToSave
+  );
+
+  if (!isValidPathToPages) {
+    console.error(
+      "\x1b[41m",
+      `EXCEPTIONS: The given path '${pathToPages}' is invalid. (1012)`,
+      "\x1b[0m"
+    );
+    process.exit(12);
+  } else if (!isValidPathToSave) {
+    console.error(
+      "\x1b[41m",
+      `EXCEPTIONS: The given path '${pathToSave}' is invalid. (1013)`,
+      "\x1b[0m"
+    );
+    process.exit(12);
+  }
+}
