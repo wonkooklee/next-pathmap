@@ -1,7 +1,7 @@
 {
   "name": "demo-npm-cli-tool",
   "license": "MIT",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "First npm CLI tool published",
   "repository": "wonkooklee/demo-npm-cli-tool",
   "author": {

@@ -52,16 +52,13 @@ export async function gen({ pathToPages, pathToSave, includes, excludes }) {
   if (pages.length === 0) {
     console.error(
       "\x1b[41m",
-      "EXCEPTIONS: The given directory has no matched page files. (1002)"
+      "EXCEPTIONS: The given directory has no matched page files. (1002)",
+      "\x1b[0m"
     );
     process.exit(12);
   }
 
-  const saveDir = pathToSave.match(/(.*?)(?=\/.+$)/)[0];
-
-  if (!fs.existsSync(saveDir)) {
-    fs.mkdirSync(saveDir);
-  }
+  mkdirRecursively(normalizeSavePath(pathToSave));
 
   const existingPaths = await readExistPaths(pathToSave);
 
@@ -73,22 +70,40 @@ export async function gen({ pathToPages, pathToSave, includes, excludes }) {
       return a.localeCompare(b);
     });
 
-  console.log(parsedPaths);
-  console.log(
-    "\x1b[42m",
-    "SUCCESS: Pathmap file has been created successfully.",
-    "\x1b[0m"
-  );
-  console.log("\x1b[32m", `OUTPUT: ./${pathToSave}`, "\x1b[0m");
-
-  fs.writeFile(
+  await fs.writeFile(
     pathToSave,
     jsonFormat(processing(parsedPaths, existingPaths)),
     { encoding: "utf-8" },
     (err) => {
       if (err) {
-        throw err;
+        console.error(
+          "\x1b[41m",
+          "ERROR: Could not save the pathmap file to the given directory. (3002)",
+          "\x1b[0m"
+        );
+        console.error(err);
+        process.exit(12);
+      } else {
+        console.log(parsedPaths);
+        console.log(
+          "\x1b[42m",
+          "SUCCESS: Pathmap file has been created successfully.",
+          "\x1b[0m"
+        );
+        console.log("\x1b[32m", `OUTPUT: ./${pathToSave}`, "\x1b[0m");
       }
     }
   );
+}
+
+function mkdirRecursively(pathToSave) {
+  if (!fs.existsSync(pathToSave)) {
+    fs.mkdirSync(pathToSave, {
+      recursive: true,
+    });
+  }
+}
+
+function normalizeSavePath(path) {
+  return path.replace(/(^\.\/|^\/|\/[\w\d-]+?\.json$)/g, "");
 }
