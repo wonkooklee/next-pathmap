@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import inquirer from "inquirer";
-import { gen } from "./pathgen.mjs";
+import { gen } from "./pathgen.js";
 
 inquirer
   .prompt([
