@@ -1,7 +1,7 @@
 {
   "name": "demo-npm-cli-tool",
   "license": "MIT",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "First npm CLI tool published",
   "repository": "wonkooklee/demo-npm-cli-tool",
   "author": {
@@ -12,20 +12,24 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "main": "src/index.js",
-  "scripts": {},
-  "bin": "src/index.js",
+  "main": "out/index.js",
+  "bin": "out/index.js",
+  "scripts": {
+    "build": "npx tsc"
+  },
   "keywords": [
     "cli",
     "npmtool"
   ],
   "type": "module",
   "dependencies": {
-    "globby": "^13.1.4",
-    "inquirer": "^9.2.0",
-    "json-format": "^1.0.1"
+    "globby": "13.1.4",
+    "inquirer": "9.2.0",
+    "json-format": "1.0.1",
+    "zod": "3.21.4"
   },
   "devDependencies": {
-    "@types/node": "^18.16.3"
+    "@types/node": "^18.16.3",
+    "typescript": "^5.0.4"
   }
 }
