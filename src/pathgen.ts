@@ -2,12 +2,11 @@ import fs from "node:fs";
 import { globby } from "globby";
 import jsonFormat from "json-format";
 
-function processing(paths, existingPaths) {
+function processing(paths, existingPaths, schema) {
   return paths.reduce((acc, path) => {
     const { query } = trimmingDynamicRoutes(path);
     acc[path] = {
-      alias: "",
-      trackPageView: true,
+      ...schema,
       ...existingPaths[path],
       query,
     };
@@ -40,7 +39,13 @@ async function readExistPaths(pathToSave) {
   }
 }
 
-export async function gen({ pathToPages, pathToSave, includes, excludes }) {
+export async function gen({
+  pathToPages,
+  pathToSave,
+  includes,
+  excludes,
+  schema,
+}) {
   const pages = await globby([...includes, ...excludes], {
     cwd: pathToPages || "src/pages",
     absolute: false,
@@ -51,9 +56,11 @@ export async function gen({ pathToPages, pathToSave, includes, excludes }) {
 
   if (pages.length === 0) {
     console.error(
+      `\n`,
       "\x1b[41m",
-      "EXCEPTIONS: The given directory has no matched page files. (1002)",
-      "\x1b[0m"
+      "EXCEPTION: The given directory has no matched page files. (1002)",
+      "\x1b[0m",
+      `\n`
     );
     process.exit(12);
   }
@@ -72,23 +79,27 @@ export async function gen({ pathToPages, pathToSave, includes, excludes }) {
 
   await fs.writeFile(
     pathToSave,
-    jsonFormat(processing(parsedPaths, existingPaths)),
+    jsonFormat(processing(parsedPaths, existingPaths, schema)),
     { encoding: "utf-8" },
     (err) => {
       if (err) {
         console.error(
+          `\n`,
           "\x1b[41m",
           "ERROR: Could not save the pathmap file to the given directory. (3002)",
-          "\x1b[0m"
+          "\x1b[0m",
+          `\n`
         );
         console.error(err);
         process.exit(12);
       } else {
         console.log(parsedPaths);
         console.log(
+          `\n`,
           "\x1b[42m",
           "SUCCESS: Pathmap file has been created successfully.",
-          "\x1b[0m"
+          "\x1b[0m",
+          `\n`
         );
         console.log("\x1b[32m", `OUTPUT: ./${pathToSave}`, "\x1b[0m");
       }

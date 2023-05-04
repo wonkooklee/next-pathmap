@@ -1,15 +1,22 @@
-#!/usr/bin/env node
-
+import fs from "node:fs";
 import inquirer from "inquirer";
-import { gen } from "./pathgen.js";
+import { PathmapConfig } from "./models.js";
 
-if (process.stdout.isTTY === false) {
-  console.error("\x1b[41m", "ERROR: Something went wrong. (3000)", "\x1b[0m");
-  process.exit(1);
-}
+export async function prompt() {
+  try {
+    const config = await fs.readFileSync("pathmap.config.json", {
+      encoding: "utf-8",
+    });
 
-inquirer
-  .prompt([
+    if (config) {
+      const validConf = validateConfig(config);
+      return validConf;
+    }
+  } catch (error) {}
+
+  console.log(`\n \x1b[33m > pathmap.config.json not founded. \x1b[0m \n`);
+
+  return inquirer.prompt([
     {
       type: "input",
       name: "pathToPages",
@@ -69,40 +76,23 @@ inquirer
         },
       ],
     },
-  ])
-  .then(async ({ pathToPages, pathToSave, includes, excludes }) => {
-    console.log(pathToPages);
-    console.log(pathToSave);
-    validatePaths({ pathToPages, pathToSave });
-    gen({
-      pathToPages,
-      pathToSave,
-      includes: [includes],
-      excludes,
-    });
-  });
+  ]);
+}
 
-function validatePaths({ pathToPages, pathToSave }) {
-  const isValidPathToPages = /^((\/|\.|\.{2}|[\w\d]).+)?pages$/.test(
-    pathToPages
-  );
-  const isValidPathToSave = /^((\/|\.|\.{2}|[\w\d]).+)?[\w\d-]\.json$/.test(
-    pathToSave
-  );
+function validateConfig(config) {
+  const configuration = JSON.parse(config);
+  const result = PathmapConfig.safeParse(configuration);
 
-  if (!isValidPathToPages) {
+  if (result.success === false) {
     console.error(
+      `\n`,
       "\x1b[41m",
-      `EXCEPTIONS: The given path '${pathToPages}' is invalid. (1012)`,
+      `EXCEPTION: Invalid configuration. (1015)`,
       "\x1b[0m"
     );
-    process.exit(12);
-  } else if (!isValidPathToSave) {
-    console.error(
-      "\x1b[41m",
-      `EXCEPTIONS: The given path '${pathToSave}' is invalid. (1013)`,
-      "\x1b[0m"
-    );
+    console.error(result.error.issues);
     process.exit(12);
   }
+
+  return configuration;
 }
