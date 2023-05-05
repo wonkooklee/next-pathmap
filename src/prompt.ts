@@ -1,22 +1,21 @@
-import fs from "node:fs";
 import inquirer from "inquirer";
+import { resolve } from "node:path";
 import { PathmapConfig } from "./models.js";
+import { checkConfigExist } from "./check.js";
 
 export async function prompt() {
-  try {
-    const config = await fs.readFileSync("pathmap.config.json", {
-      encoding: "utf-8",
-    });
+  if (checkConfigExist()) {
+    console.log(
+      `\n \x1b[42m > pathmap.config.js has been detected. \x1b[0m \n`
+    );
+    const config = await import(resolve("pathmap.config.js"));
+    const result = validateConfig(config.default);
+    return result;
+  }
 
-    if (config) {
-      const validConf = validateConfig(config);
-      return validConf;
-    }
-  } catch (error) {}
+  console.log(`\n \x1b[33m > pathmap.config.js has not been found. \x1b[0m \n`);
 
-  console.log(`\n \x1b[33m > pathmap.config.json not founded. \x1b[0m \n`);
-
-  return inquirer.prompt([
+  return await inquirer.prompt([
     {
       type: "input",
       name: "pathToPages",
@@ -80,8 +79,7 @@ export async function prompt() {
 }
 
 function validateConfig(config) {
-  const configuration = JSON.parse(config);
-  const result = PathmapConfig.safeParse(configuration);
+  const result = PathmapConfig.safeParse(config);
 
   if (result.success === false) {
     console.error(
@@ -94,5 +92,5 @@ function validateConfig(config) {
     process.exit(12);
   }
 
-  return configuration;
+  return config;
 }

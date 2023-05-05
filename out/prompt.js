@@ -34,32 +34,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import fs from "node:fs";
 import inquirer from "inquirer";
+import { resolve } from "node:path";
 import { PathmapConfig } from "./models.js";
+import { checkConfigExist } from "./check.js";
 export function prompt() {
     return __awaiter(this, void 0, void 0, function () {
-        var config, validConf, error_1;
+        var config, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, fs.readFileSync("pathmap.config.json", {
-                            encoding: "utf-8",
-                        })];
+                    if (!checkConfigExist()) return [3 /*break*/, 2];
+                    console.log("\n \u001B[42m > pathmap.config.js has been detected. \u001B[0m \n");
+                    return [4 /*yield*/, import(resolve("pathmap.config.js"))];
                 case 1:
                     config = _a.sent();
-                    if (config) {
-                        validConf = validateConfig(config);
-                        return [2 /*return*/, validConf];
-                    }
-                    return [3 /*break*/, 3];
+                    result = validateConfig(config.default);
+                    return [2 /*return*/, result];
                 case 2:
-                    error_1 = _a.sent();
-                    return [3 /*break*/, 3];
-                case 3:
-                    console.log("\n \u001B[33m > pathmap.config.json not founded. \u001B[0m \n");
-                    return [2 /*return*/, inquirer.prompt([
+                    console.log("\n \u001B[33m > pathmap.config.js has not been found. \u001B[0m \n");
+                    return [4 /*yield*/, inquirer.prompt([
                             {
                                 type: "input",
                                 name: "pathToPages",
@@ -120,17 +114,17 @@ export function prompt() {
                                 ],
                             },
                         ])];
+                case 3: return [2 /*return*/, _a.sent()];
             }
         });
     });
 }
 function validateConfig(config) {
-    var configuration = JSON.parse(config);
-    var result = PathmapConfig.safeParse(configuration);
+    var result = PathmapConfig.safeParse(config);
     if (result.success === false) {
         console.error("\n", "\x1b[41m", "EXCEPTION: Invalid configuration. (1015)", "\x1b[0m");
         console.error(result.error.issues);
         process.exit(12);
     }
-    return configuration;
+    return config;
 }
