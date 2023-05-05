@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "module": "ES2015",
+    "module": "ESNext",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
+    "declaration": true,
     "outDir": "out",
-    "rootDir": "src"
+    "rootDir": "src",
+    "typeRoots": ["config"]
   },
-  "exclude": ["node_modules", "out"]
+  "include": ["src"],
+  "exclude": ["node_modules", "out", "config"]
 }

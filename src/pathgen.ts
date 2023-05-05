@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFile } from "node:fs";
 import { globby } from "globby";
 import jsonFormat from "json-format";
 
@@ -30,7 +30,7 @@ function trimmingDynamicRoutes(path) {
 
 async function readExistPaths(pathToSave) {
   try {
-    const files = await fs.readFileSync(pathToSave, {
+    const files = await readFileSync(pathToSave, {
       encoding: "utf-8",
     });
     return JSON.parse(files);
@@ -77,7 +77,7 @@ export async function gen({
       return a.localeCompare(b);
     });
 
-  await fs.writeFile(
+  await writeFile(
     pathToSave,
     jsonFormat(processing(parsedPaths, existingPaths, schema)),
     { encoding: "utf-8" },
@@ -108,8 +108,8 @@ export async function gen({
 }
 
 function mkdirRecursively(pathToSave) {
-  if (!fs.existsSync(pathToSave)) {
-    fs.mkdirSync(pathToSave, {
+  if (!existsSync(pathToSave)) {
+    mkdirSync(pathToSave, {
       recursive: true,
     });
   }

@@ -1,27 +1,14 @@
-#!/usr/bin/env node
-
 import { gen } from "./pathgen.js";
 import { prompt } from "./prompt.js";
 
-const defaultSchema = {
-  alias: "",
-  trackPageView: true,
-  query: [],
-};
-
-export async function main() {
+export async function pathmap() {
   if (process.stdout.isTTY === false) {
     console.error("\x1b[41m", "ERROR: Something went wrong. (3000)", "\x1b[0m");
     process.exit(1);
   }
 
-  const {
-    pathToPages,
-    pathToSave,
-    includes,
-    excludes,
-    schema = defaultSchema,
-  } = await prompt();
+  const { pathToPages, pathToSave, includes, excludes, schema } =
+    await prompt();
 
   validatePaths({ pathToPages, pathToSave });
 
@@ -62,5 +49,3 @@ function validatePaths({ pathToPages, pathToSave }) {
     process.exit(12);
   }
 }
-
-main();

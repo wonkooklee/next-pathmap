@@ -1,9 +1,9 @@
 {
-  "name": "demo-npm-cli-tool",
+  "name": "@cookies/next-pathmap",
   "license": "MIT",
-  "version": "1.1.0",
-  "description": "First npm CLI tool published",
-  "repository": "wonkooklee/demo-npm-cli-tool",
+  "version": "1.1.10",
+  "description": "Pathmap Generator for Next.js Pages",
+  "repository": "wonkooklee/next-pathmap",
   "author": {
     "name": "Wonkook Lee",
     "url": "https://github.com/wonkooklee",
@@ -13,13 +13,19 @@
     "node": ">=14.0.0"
   },
   "main": "out/index.js",
-  "bin": "out/index.js",
+  "bin": "out/bin.js",
+  "types": "out/index.d.ts",
   "scripts": {
     "build": "npx tsc"
   },
   "keywords": [
-    "cli",
-    "npmtool"
+    "generator",
+    "next.js",
+    "next",
+    "pages",
+    "path",
+    "pathmap",
+    "route"
   ],
   "type": "module",
   "dependencies": {

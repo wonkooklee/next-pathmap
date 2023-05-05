@@ -6,8 +6,6 @@ export const PathmapConfig = z
     pathToSave: z.string(),
     includes: z.array(z.string()).min(1),
     excludes: z.array(z.string()).min(1),
-    schema: z.object({
-      query: z.array(z.string()),
-    }),
+    schema: z.object({}),
   })
   .required();

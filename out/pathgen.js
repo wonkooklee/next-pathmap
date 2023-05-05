@@ -54,7 +54,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-import fs from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFile } from "node:fs";
 import { globby } from "globby";
 import jsonFormat from "json-format";
 function processing(paths, existingPaths, schema) {
@@ -83,7 +83,7 @@ function readExistPaths(pathToSave) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, fs.readFileSync(pathToSave, {
+                    return [4 /*yield*/, readFileSync(pathToSave, {
                             encoding: "utf-8",
                         })];
                 case 1:
@@ -127,7 +127,7 @@ export function gen(_a) {
                         .sort(function (a, b) {
                         return a.localeCompare(b);
                     });
-                    return [4 /*yield*/, fs.writeFile(pathToSave, jsonFormat(processing(parsedPaths, existingPaths, schema)), { encoding: "utf-8" }, function (err) {
+                    return [4 /*yield*/, writeFile(pathToSave, jsonFormat(processing(parsedPaths, existingPaths, schema)), { encoding: "utf-8" }, function (err) {
                             if (err) {
                                 console.error("\n", "\x1b[41m", "ERROR: Could not save the pathmap file to the given directory. (3002)", "\x1b[0m", "\n");
                                 console.error(err);
@@ -147,8 +147,8 @@ export function gen(_a) {
     });
 }
 function mkdirRecursively(pathToSave) {
-    if (!fs.existsSync(pathToSave)) {
-        fs.mkdirSync(pathToSave, {
+    if (!existsSync(pathToSave)) {
+        mkdirSync(pathToSave, {
             recursive: true,
         });
     }

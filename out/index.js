@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -46,16 +45,11 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 import { gen } from "./pathgen.js";
 import { prompt } from "./prompt.js";
-var defaultSchema = {
-    alias: "",
-    trackPageView: true,
-    query: [],
-};
-export function main() {
+export function pathmap() {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, pathToPages, pathToSave, includes, excludes, _b, schema;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var _a, pathToPages, pathToSave, includes, excludes, schema;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     if (process.stdout.isTTY === false) {
                         console.error("\x1b[41m", "ERROR: Something went wrong. (3000)", "\x1b[0m");
@@ -63,7 +57,7 @@ export function main() {
                     }
                     return [4 /*yield*/, prompt()];
                 case 1:
-                    _a = _c.sent(), pathToPages = _a.pathToPages, pathToSave = _a.pathToSave, includes = _a.includes, excludes = _a.excludes, _b = _a.schema, schema = _b === void 0 ? defaultSchema : _b;
+                    _a = _b.sent(), pathToPages = _a.pathToPages, pathToSave = _a.pathToSave, includes = _a.includes, excludes = _a.excludes, schema = _a.schema;
                     validatePaths({ pathToPages: pathToPages, pathToSave: pathToSave });
                     gen({
                         pathToPages: pathToPages,
@@ -90,4 +84,3 @@ function validatePaths(_a) {
         process.exit(12);
     }
 }
-main();

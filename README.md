@@ -1,4 +1,8 @@
-# Pathmap Generator for 'Pages' directory of Next.js
+# next-pathmap
+
+Pathmap Generator for 'Pages' directory of Next.js
+
+<br />
 
 ## Requirements
 
@@ -15,9 +19,9 @@
 npx script running fashion.
 
 ```sh
-npx demo-npm-cli-tool # cannot define config file.
+npx next-pathmap # cannot define config file.
 or
-npm install demo-npm-cli-tool
+npm install next-pathmap
 ```
 
 ## Configuration vs. Cli Interactions
