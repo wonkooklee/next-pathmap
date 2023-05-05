@@ -1,13 +1,16 @@
-<div align="center">
-<h1>
-<img src="https://user-images.githubusercontent.com/61101022/236479507-48e8efe0-55b8-4357-b24b-b552393286b7.png" alt="logo" width="160">
+<br />
+<br />
 
-<b>next-pathmap</b>
-</h1>
+<div style="text-align:center;">
+<figure><img src="https://user-images.githubusercontent.com/61101022/236479507-48e8efe0-55b8-4357-b24b-b552393286b7.png" alt="logo" width="160"></figure>
 
-<h3> Pathmap Generator for 'Pages' directory of Next.js </h3>
+<h1> <b>next-pathmap</b> </h1>
+
+<p> Pathmap Generator for 'Pages' directory of Next.js </p>
+
 </div>
 
+<br />
 <br />
 
 ## Requirements
