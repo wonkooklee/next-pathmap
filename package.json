@@ -39,6 +39,6 @@
     "typescript": "^5.0.4"
   },
   "publishConfig": {
-    "@oneook:registry": "https://npm.pkg.github.com"
+    "@wonkooklee:registry": "https://npm.pkg.github.com"
   }
 }
