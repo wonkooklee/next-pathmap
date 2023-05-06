@@ -11,8 +11,14 @@ export async function pathmap() {
     process.exit(1);
   }
 
-  const { pathToPages, pathToSave, includes, excludes, schema } =
-    await prompt();
+  const {
+    pathToPages,
+    pathToSave,
+    includes,
+    excludes,
+    schema,
+    categories = [],
+  } = await prompt();
 
   validatePaths({ pathToPages, pathToSave });
 
@@ -22,6 +28,7 @@ export async function pathmap() {
     includes: Array.isArray(includes) ? includes : [includes],
     excludes,
     schema,
+    categories,
   });
 }
 

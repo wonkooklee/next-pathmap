@@ -58,10 +58,14 @@ import { existsSync, mkdirSync, readFileSync, writeFile } from "node:fs";
 import { globby } from "globby";
 import jsonFormat from "json-format";
 import { Print } from "./print.js";
-function processing(paths, existingPaths, schema) {
+function processing(paths, existingPaths, schema, categories) {
     return paths.reduce(function (acc, path) {
         var query = trimmingDynamicRoutes(path).query;
-        acc[path] = __assign(__assign(__assign({}, schema), existingPaths[path]), { query: query });
+        var segments = path.split("/").slice(1);
+        var category = categories === null || categories === void 0 ? void 0 : categories.map(function (segment, idx) {
+            return segment[segments[idx]];
+        }).filter(function (seg) { return seg; });
+        acc[path] = __assign(__assign(__assign(__assign({}, schema), existingPaths[path]), (category && { categories: category })), { query: query });
         return acc;
     }, {});
 }
@@ -100,7 +104,7 @@ function readExistPaths(pathToSave) {
     });
 }
 export function gen(_a) {
-    var pathToPages = _a.pathToPages, pathToSave = _a.pathToSave, includes = _a.includes, excludes = _a.excludes, schema = _a.schema;
+    var pathToPages = _a.pathToPages, pathToSave = _a.pathToSave, includes = _a.includes, excludes = _a.excludes, schema = _a.schema, categories = _a.categories;
     return __awaiter(this, void 0, void 0, function () {
         var pages, existingPaths, parsedPaths;
         return __generator(this, function (_b) {
@@ -133,7 +137,7 @@ export function gen(_a) {
                         .sort(function (a, b) {
                         return a.localeCompare(b);
                     });
-                    return [4 /*yield*/, writeFile(pathToSave, jsonFormat(processing(parsedPaths, existingPaths, schema)), { encoding: "utf-8" }, function (err) {
+                    return [4 /*yield*/, writeFile(pathToSave, jsonFormat(processing(parsedPaths, existingPaths, schema, categories)), { encoding: "utf-8" }, function (err) {
                             if (err) {
                                 Print.error("ERROR: Could not save the pathmap file to the given directory. (3002)", {
                                     highlight: "background",
