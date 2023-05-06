@@ -37,14 +37,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import inquirer from "inquirer";
 import { resolve } from "node:path";
 import { PathmapConfig } from "./models.js";
-import { checkConfigExist } from "./check.js";
+import { checkFileExist } from "./check.js";
 export function prompt() {
     return __awaiter(this, void 0, void 0, function () {
         var config, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!checkConfigExist()) return [3 /*break*/, 2];
+                    if (!checkFileExist("pathmap.config.js")) return [3 /*break*/, 2];
                     console.log("\n \u001B[42m > pathmap.config.js has been detected. \u001B[0m \n");
                     return [4 /*yield*/, import(resolve("pathmap.config.js"))];
                 case 1:
@@ -52,7 +52,7 @@ export function prompt() {
                     result = validateConfig(config.default);
                     return [2 /*return*/, result];
                 case 2:
-                    console.log("\n \u001B[33m > pathmap.config.js has not been found. \u001B[0m \n");
+                    console.log("\n \u001B[33m INFO: pathmap.config.js has not been found. \u001B[0m \n");
                     return [4 /*yield*/, inquirer.prompt([
                             {
                                 type: "input",

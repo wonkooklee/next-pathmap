@@ -34,44 +34,37 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { gen } from "./pathgen.js";
-import { prompt } from "./prompt.js";
-export function pathmap() {
+import { resolve } from "node:path";
+import { checkFileExist } from "./check.js";
+export function parseNextConfig() {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, pathToPages, pathToSave, includes, excludes, schema;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var isNextConfigExist, nextConfig;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
-                    if (process.stdout.isTTY === false) {
-                        console.error("\x1b[41m", "ERROR: Something went wrong. (3000)", "\x1b[0m");
-                        process.exit(1);
+                    isNextConfigExist = checkFileExist("next.config.js");
+                    if (!isNextConfigExist) {
+                        console.error("\n", "\x1b[41m", "EXCEPTION: Could not find 'next.config.js' in your root directory. (1022)", "\x1b[0m", "\n");
+                        process.exit(12);
                     }
-                    return [4 /*yield*/, prompt()];
+                    return [4 /*yield*/, import(resolve("next.config.js"))];
                 case 1:
-                    _a = _b.sent(), pathToPages = _a.pathToPages, pathToSave = _a.pathToSave, includes = _a.includes, excludes = _a.excludes, schema = _a.schema;
-                    validatePaths({ pathToPages: pathToPages, pathToSave: pathToSave });
-                    gen({
-                        pathToPages: pathToPages,
-                        pathToSave: pathToSave,
-                        includes: includes,
-                        excludes: excludes,
-                        schema: schema,
-                    });
+                    nextConfig = _a.sent();
+                    if ("pageExtensions" in nextConfig.default) {
+                        console.log("\n", "\x1b[42m", "INFO: 'pageExtensions' property has been found in 'next.config.js' as below.", "\x1b[0m");
+                        console.log("\x1b[32m", nextConfig.default.pageExtensions, "\x1b[0m");
+                        return [2 /*return*/, pageExtensionsToGlob(nextConfig.default.pageExtensions)];
+                    }
+                    else {
+                        console.log("\n \u001B[33m INFO: Could not find 'pageExtensions' in 'next.config.js'. \u001B[0m \n");
+                        console.log("\n \u001B[33m INFO: Set as default, '**/*.{ts,tsx,js,jsx}.'. \u001B[0m \n");
+                        return [2 /*return*/, ["**/*.{ts,tsx,js,jsx}"]];
+                    }
                     return [2 /*return*/];
             }
         });
     });
 }
-function validatePaths(_a) {
-    var pathToPages = _a.pathToPages, pathToSave = _a.pathToSave;
-    var isValidPathToPages = /^((\/|\.|\.{2}|[\w\d]).+)?pages$/.test(pathToPages);
-    var isValidPathToSave = /^((\/|\.|\.{2}|[\w\d]).+)?[\w\d-]\.json$/.test(pathToSave);
-    if (!isValidPathToPages) {
-        console.error("\n", "\x1b[41m", "EXCEPTION: The given path '".concat(pathToPages, "' is invalid. (1012)"), "\x1b[0m", "\n");
-        process.exit(12);
-    }
-    else if (!isValidPathToSave) {
-        console.error("\n", "\x1b[41m", "EXCEPTION: The given path '".concat(pathToSave, "' is invalid. (1013)"), "\x1b[0m", "\n");
-        process.exit(12);
-    }
+function pageExtensionsToGlob(pageExtensions) {
+    return pageExtensions.map(function (extension) { return "**/*.".concat(extension); });
 }

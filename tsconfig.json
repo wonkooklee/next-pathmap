@@ -8,7 +8,9 @@
     "declaration": true,
     "outDir": "out",
     "rootDir": "src",
-    "typeRoots": ["config"]
+    "typeRoots": ["./types"],
+    "strict": true,
+    "strictNullChecks": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "out", "config"]

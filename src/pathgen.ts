@@ -1,9 +1,14 @@
 import { existsSync, mkdirSync, readFileSync, writeFile } from "node:fs";
 import { globby } from "globby";
 import jsonFormat from "json-format";
+import { PathmapConfigType } from "./models";
 
-function processing(paths, existingPaths, schema) {
-  return paths.reduce((acc, path) => {
+function processing(
+  paths: string[],
+  existingPaths: Record<string, any>,
+  schema: Record<string, any>
+) {
+  return paths.reduce((acc, path: string) => {
     const { query } = trimmingDynamicRoutes(path);
     acc[path] = {
       ...schema,
@@ -11,24 +16,26 @@ function processing(paths, existingPaths, schema) {
       query,
     };
     return acc;
-  }, {});
+  }, {} as Record<string, any>);
 }
 
-function isDynamic(path) {
+function isDynamic(path: string) {
   return /\[(\.{3})?[\w\d-]+\]/.test(path);
 }
 
-function trimmingDynamicRoutes(path) {
+function trimmingDynamicRoutes(path: string) {
   const query = isDynamic(path)
-    ? path.match(/\[(\.{3})?[\w\d-]+\]/g)?.map((queryInDynamicSyntax) => {
-        return queryInDynamicSyntax.replace(/\[(\.{3})?([\w\d-]+)\]/, "$2");
-      })
+    ? path
+        .match(/\[(\.{3})?[\w\d-]+\]/g)
+        ?.map((queryInDynamicSyntax: string) => {
+          return queryInDynamicSyntax.replace(/\[(\.{3})?([\w\d-]+)\]/, "$2");
+        })
     : [];
 
   return { query };
 }
 
-async function readExistPaths(pathToSave) {
+async function readExistPaths(pathToSave: string) {
   try {
     const files = await readFileSync(pathToSave, {
       encoding: "utf-8",
@@ -45,7 +52,7 @@ export async function gen({
   includes,
   excludes,
   schema,
-}) {
+}: Required<PathmapConfigType>) {
   const pages = await globby([...includes, ...excludes], {
     cwd: pathToPages || "src/pages",
     absolute: false,
@@ -71,7 +78,13 @@ export async function gen({
 
   const parsedPaths = pages
     .map((page) => {
-      return "/" + page.path.replace(/(\/?index)?\.page\.ts(x)?$/, "");
+      return (
+        "/" +
+        page.path.replace(
+          /(\/?index)?((\.[\w\d-]+){1,})?\.(js|jsx|ts|tsx)$/,
+          ""
+        )
+      );
     })
     .sort((a, b) => {
       return a.localeCompare(b);
@@ -107,7 +120,7 @@ export async function gen({
   );
 }
 
-function mkdirRecursively(pathToSave) {
+function mkdirRecursively(pathToSave: string) {
   if (!existsSync(pathToSave)) {
     mkdirSync(pathToSave, {
       recursive: true,
@@ -115,6 +128,6 @@ function mkdirRecursively(pathToSave) {
   }
 }
 
-function normalizeSavePath(path) {
+function normalizeSavePath(path: string) {
   return path.replace(/(^\.\/|^\/|\/[\w\d-]+?\.json$)/g, "");
 }

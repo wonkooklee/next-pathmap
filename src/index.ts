@@ -15,13 +15,19 @@ export async function pathmap() {
   gen({
     pathToPages,
     pathToSave,
-    includes: Array.isArray(includes) ? [...includes] : [includes],
+    includes,
     excludes,
     schema,
   });
 }
 
-function validatePaths({ pathToPages, pathToSave }) {
+function validatePaths({
+  pathToPages,
+  pathToSave,
+}: {
+  pathToPages: string;
+  pathToSave: string;
+}) {
   const isValidPathToPages = /^((\/|\.|\.{2}|[\w\d]).+)?pages$/.test(
     pathToPages
   );

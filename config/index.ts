@@ -45,7 +45,11 @@ export interface PathmapConfig extends Record<string, any> {
    *  ```
    */
   schema: Record<string, any> & {
-    query: never[];
     alias?: string;
+    meta?: {
+      title?: string;
+      description?: string;
+      keywords?: string[];
+    };
   };
 }

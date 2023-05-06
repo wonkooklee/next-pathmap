@@ -1,7 +1,7 @@
 {
   "name": "next-pathmap",
   "license": "MIT",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "description": "Pathmap Generator for Next.js Pages",
   "repository": "wonkooklee/next-pathmap",
   "author": {
@@ -16,7 +16,7 @@
   "bin": "out/bin.js",
   "types": "out/index.d.ts",
   "scripts": {
-    "build": "npx tsc"
+    "build": "rm -rf out && npx tsc"
   },
   "keywords": [
     "generator",
