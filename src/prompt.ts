@@ -91,7 +91,7 @@ function validateConfig(config: PathmapConfigType) {
       highlight: "background",
       spacing: true,
     });
-    Print.error(result.error?.issues?.toString(), {
+    Print.error(result.error?.issues, {
       highlight: "foreground",
     });
 

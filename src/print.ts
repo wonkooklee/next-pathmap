@@ -4,6 +4,8 @@ type PrintStyle = {
   context: Exclude<keyof typeof Print.palette, "reset">;
 };
 
+type Printable = any;
+
 export class Print {
   static palette = {
     reset: "\x1b[0m",
@@ -22,32 +24,34 @@ export class Print {
   };
 
   static styleMessage(
-    message: string,
+    message: Printable,
     { spacing, highlight, context }: PrintStyle
   ) {
-    let mustable = [message];
+    let printable = [message];
     if (context) {
-      mustable = [
+      printable = [
         this.palette[context][highlight],
         message,
         this.palette.reset,
       ];
     }
     if (spacing) {
-      ["\n", mustable, "\n"];
+      ["\n", printable, "\n"];
     }
-    return message;
+    return printable;
   }
 
-  static error(message: string, style: Omit<PrintStyle, "context">) {
-    console.error(this.styleMessage(message, { context: "warn", ...style }));
+  static error(message: Printable, style: Omit<PrintStyle, "context">) {
+    console.error(...this.styleMessage(message, { context: "warn", ...style }));
   }
 
-  static info(message: string, style: Omit<PrintStyle, "context">) {
-    console.log(this.styleMessage(message, { context: "info", ...style }));
+  static info(message: Printable, style: Omit<PrintStyle, "context">) {
+    console.log(...this.styleMessage(message, { context: "info", ...style }));
   }
 
-  static success(message: string, style: Omit<PrintStyle, "context">) {
-    console.log(this.styleMessage(message, { context: "success", ...style }));
+  static success(message: Printable, style: Omit<PrintStyle, "context">) {
+    console.log(
+      ...this.styleMessage(message, { context: "success", ...style })
+    );
   }
 }
