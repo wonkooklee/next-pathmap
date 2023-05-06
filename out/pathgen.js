@@ -57,7 +57,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 import { existsSync, mkdirSync, readFileSync, writeFile } from "node:fs";
 import { globby } from "globby";
 import jsonFormat from "json-format";
-import { Print } from "./print";
+import { Print } from "./print.js";
 function processing(paths, existingPaths, schema) {
     return paths.reduce(function (acc, path) {
         var query = trimmingDynamicRoutes(path).query;
