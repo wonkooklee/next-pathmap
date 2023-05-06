@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFile } from "node:fs";
 import { globby } from "globby";
 import jsonFormat from "json-format";
 import { PathmapConfigType } from "./models";
+import { Print } from "./print";
 
 function processing(
   paths: string[],
@@ -62,12 +63,12 @@ export async function gen({
   });
 
   if (pages.length === 0) {
-    console.error(
-      `\n`,
-      "\x1b[41m",
+    Print.error(
       "EXCEPTION: The given directory has no matched page files. (1002)",
-      "\x1b[0m",
-      `\n`
+      {
+        highlight: "background",
+        spacing: true,
+      }
     );
     process.exit(12);
   }
@@ -96,25 +97,22 @@ export async function gen({
     { encoding: "utf-8" },
     (err) => {
       if (err) {
-        console.error(
-          `\n`,
-          "\x1b[41m",
+        Print.error(
           "ERROR: Could not save the pathmap file to the given directory. (3002)",
-          "\x1b[0m",
-          `\n`
+          {
+            highlight: "background",
+            spacing: true,
+          }
         );
-        console.error(err);
+        Print.error(err?.message, { highlight: "foreground" });
         process.exit(12);
       } else {
-        console.log(parsedPaths);
-        console.log(
-          `\n`,
-          "\x1b[42m",
-          "SUCCESS: Pathmap file has been created successfully.",
-          "\x1b[0m",
-          `\n`
-        );
-        console.log("\x1b[32m", `OUTPUT: ./${pathToSave}`, "\x1b[0m");
+        Print.success(parsedPaths?.toString(), { highlight: "foreground" });
+        Print.success("SUCCESS: Pathmap file has been created successfully.", {
+          highlight: "background",
+          spacing: true,
+        });
+        Print.success(`OUTPUT: ./${pathToSave}`, { highlight: "foreground" });
       }
     }
   );
