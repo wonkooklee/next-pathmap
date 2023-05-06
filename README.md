@@ -109,39 +109,47 @@ You can select only basic options compared to setting via config file.
 
 All paths in the project are mapped to a JSON object as shown below. Use it as meta information on the page by importing it or refer to it as an alias in the path.
 
+### Artifact
+
 ```json
 {
   "/services/insurance": {
-		"alias": "serv-insurance-page-viewed",
-		"trackPageView": true,
-		"categories": [
-			"customer-service",
-			"insurance/main"
-		],
-		"query": []
-	},
-	"/services/loan": {
-		"alias": "serv-loan-page-viewed",
-		"trackPageView": true,
-		"categories": [
-			"customer-service",
-			"loan/main"
-		],
-		"query": []
-	},
-	"/services/products/[id]": {
-		"alias": "serv-prod-id-page-viewed",
-		"trackPageView": true,
-		"categories": [
-			"customer-service",
-			"product/detail"
-		],
-		"query": [
-			"id"
-		]
-	},
+    "alias": "serv-insurance-page-viewed",
+    "trackPageView": true,
+    "categories": ["customer-service", "insurance/main"],
+    "query": []
+  },
+  "/services/loan": {
+    "alias": "serv-loan-page-viewed",
+    "trackPageView": true,
+    "categories": ["customer-service", "loan/main"],
+    "query": []
+  },
+  "/services/products/[id]": {
+    "alias": "serv-prod-id-page-viewed",
+    "trackPageView": true,
+    "categories": ["customer-service", "product/detail"],
+    "query": ["id"]
+  }
 }
 ```
+
+### Example
+```js
+import pathmap from '@/pathmap/pathmap.json';
+
+export default function InsurancePage() {
+
+  const pathInfo = pathmap['/services/insurance'];
+  const pageAlias = pathInfo.alias;
+
+  trackPageView({ pageName: pathInfo.categories.join('/') })
+// ...
+
+
+```
+
+
 
 <br />
 
