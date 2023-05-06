@@ -70,7 +70,8 @@ function isDynamic(path) {
 function trimmingDynamicRoutes(path) {
     var _a;
     var query = isDynamic(path)
-        ? (_a = path.match(/\[(\.{3})?[\w\d-]+\]/g)) === null || _a === void 0 ? void 0 : _a.map(function (queryInDynamicSyntax) {
+        ? (_a = path
+            .match(/\[(\.{3})?[\w\d-]+\]/g)) === null || _a === void 0 ? void 0 : _a.map(function (queryInDynamicSyntax) {
             return queryInDynamicSyntax.replace(/\[(\.{3})?([\w\d-]+)\]/, "$2");
         })
         : [];
@@ -122,7 +123,8 @@ export function gen(_a) {
                     existingPaths = _b.sent();
                     parsedPaths = pages
                         .map(function (page) {
-                        return "/" + page.path.replace(/(\/?index)?\.page\.ts(x)?$/, "");
+                        return ("/" +
+                            page.path.replace(/(\/?index)?((\.[\w\d-]+){1,})?\.(js|jsx|ts|tsx)$/, ""));
                     })
                         .sort(function (a, b) {
                         return a.localeCompare(b);

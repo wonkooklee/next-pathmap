@@ -1,1 +1,1 @@
-export declare function checkConfigExist(): boolean;
+export declare function checkFileExist(filename: string): boolean;

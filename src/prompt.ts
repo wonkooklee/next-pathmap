@@ -1,10 +1,10 @@
 import inquirer from "inquirer";
 import { resolve } from "node:path";
-import { PathmapConfig } from "./models.js";
-import { checkConfigExist } from "./check.js";
+import { PathmapConfig, PathmapConfigType } from "./models.js";
+import { checkFileExist } from "./check.js";
 
 export async function prompt() {
-  if (checkConfigExist()) {
+  if (checkFileExist("pathmap.config.js")) {
     console.log(
       `\n \x1b[42m > pathmap.config.js has been detected. \x1b[0m \n`
     );
@@ -13,7 +13,9 @@ export async function prompt() {
     return result;
   }
 
-  console.log(`\n \x1b[33m > pathmap.config.js has not been found. \x1b[0m \n`);
+  console.log(
+    `\n \x1b[33m INFO: pathmap.config.js has not been found. \x1b[0m \n`
+  );
 
   return await inquirer.prompt([
     {
@@ -78,7 +80,7 @@ export async function prompt() {
   ]);
 }
 
-function validateConfig(config) {
+function validateConfig(config: PathmapConfigType) {
   const result = PathmapConfig.safeParse(config);
 
   if (result.success === false) {

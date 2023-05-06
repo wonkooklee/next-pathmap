@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
 
-export function checkConfigExist() {
-  return existsSync("pathmap.config.js");
+export function checkFileExist(filename: string) {
+  return existsSync(filename);
 }
