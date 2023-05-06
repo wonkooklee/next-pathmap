@@ -7,13 +7,21 @@ import { Print } from "./print.js";
 function processing(
   paths: string[],
   existingPaths: Record<string, any>,
-  schema: Record<string, any>
+  schema: Record<string, any>,
+  categories?: Record<string, any>[]
 ) {
   return paths.reduce((acc, path: string) => {
     const { query } = trimmingDynamicRoutes(path);
+    const segments = path.split("/").slice(1);
+    const category = categories
+      ?.map((segment, idx) => {
+        return segment[segments[idx]];
+      })
+      .filter((seg) => seg);
     acc[path] = {
       ...schema,
       ...existingPaths[path],
+      ...(category && { categories: category }),
       query,
     };
     return acc;
@@ -53,7 +61,12 @@ export async function gen({
   includes,
   excludes,
   schema,
-}: Required<PathmapConfigType>) {
+  categories,
+}: Required<PathmapConfigType> & {
+  categories?: {
+    [key: string]: any;
+  }[];
+}) {
   const pages = await globby([...includes, ...excludes], {
     cwd: pathToPages || "src/pages",
     absolute: false,
@@ -93,7 +106,7 @@ export async function gen({
 
   await writeFile(
     pathToSave,
-    jsonFormat(processing(parsedPaths, existingPaths, schema)),
+    jsonFormat(processing(parsedPaths, existingPaths, schema, categories)),
     { encoding: "utf-8" },
     (err) => {
       if (err) {

@@ -52,4 +52,10 @@ export interface PathmapConfig extends Record<string, any> {
       keywords?: string[];
     };
   };
+  /**
+   *  Extract segments as semantic strings.
+   */
+  categorize?: {
+    [key: string]: any;
+  }[];
 }

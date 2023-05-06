@@ -39,9 +39,9 @@ import { Print } from "./print.js";
 import { prompt } from "./prompt.js";
 export function pathmap() {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, pathToPages, pathToSave, includes, excludes, schema;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var _a, pathToPages, pathToSave, includes, excludes, schema, _b, categories;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     if (process.stdout.isTTY === false) {
                         Print.error("ERROR: Something went wrong. (3000)", {
@@ -52,7 +52,7 @@ export function pathmap() {
                     }
                     return [4 /*yield*/, prompt()];
                 case 1:
-                    _a = _b.sent(), pathToPages = _a.pathToPages, pathToSave = _a.pathToSave, includes = _a.includes, excludes = _a.excludes, schema = _a.schema;
+                    _a = _c.sent(), pathToPages = _a.pathToPages, pathToSave = _a.pathToSave, includes = _a.includes, excludes = _a.excludes, schema = _a.schema, _b = _a.categories, categories = _b === void 0 ? [] : _b;
                     validatePaths({ pathToPages: pathToPages, pathToSave: pathToSave });
                     gen({
                         pathToPages: pathToPages,
@@ -60,6 +60,7 @@ export function pathmap() {
                         includes: Array.isArray(includes) ? includes : [includes],
                         excludes: excludes,
                         schema: schema,
+                        categories: categories,
                     });
                     return [2 /*return*/];
             }
