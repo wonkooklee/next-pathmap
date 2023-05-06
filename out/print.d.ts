@@ -19,7 +19,7 @@ export declare class Print {
             foreground: string;
         };
     };
-    static styleMessage(message: string, { spacing, highlight, context }: PrintStyle): string;
+    static styleMessage(message: string, { spacing, highlight, context }: PrintStyle): string[];
     static error(message: string, style: Omit<PrintStyle, "context">): void;
     static info(message: string, style: Omit<PrintStyle, "context">): void;
     static success(message: string, style: Omit<PrintStyle, "context">): void;

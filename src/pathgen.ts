@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFile } from "node:fs";
 import { globby } from "globby";
 import jsonFormat from "json-format";
-import { PathmapConfigType } from "./models";
+import { PathmapConfigType } from "./models.js";
 import { Print } from "./print.js";
 
 function processing(
@@ -107,7 +107,7 @@ export async function gen({
         Print.error(err?.message, { highlight: "foreground" });
         process.exit(12);
       } else {
-        Print.success(parsedPaths?.toString(), { highlight: "foreground" });
+        Print.success(parsedPaths, { highlight: "foreground" });
         Print.success("SUCCESS: Pathmap file has been created successfully.", {
           highlight: "background",
           spacing: true,
