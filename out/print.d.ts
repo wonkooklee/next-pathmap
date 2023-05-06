@@ -3,6 +3,7 @@ type PrintStyle = {
     highlight: "foreground" | "background";
     context: Exclude<keyof typeof Print.palette, "reset">;
 };
+type Printable = any;
 export declare class Print {
     static palette: {
         reset: string;
@@ -19,9 +20,9 @@ export declare class Print {
             foreground: string;
         };
     };
-    static styleMessage(message: string, { spacing, highlight, context }: PrintStyle): string[];
-    static error(message: string, style: Omit<PrintStyle, "context">): void;
-    static info(message: string, style: Omit<PrintStyle, "context">): void;
-    static success(message: string, style: Omit<PrintStyle, "context">): void;
+    static styleMessage(message: Printable, { spacing, highlight, context }: PrintStyle): any[];
+    static error(message: Printable, style: Omit<PrintStyle, "context">): void;
+    static info(message: Printable, style: Omit<PrintStyle, "context">): void;
+    static success(message: Printable, style: Omit<PrintStyle, "context">): void;
 }
 export {};
