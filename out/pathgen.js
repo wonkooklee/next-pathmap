@@ -143,7 +143,7 @@ export function gen(_a) {
                                 process.exit(12);
                             }
                             else {
-                                Print.success(parsedPaths === null || parsedPaths === void 0 ? void 0 : parsedPaths.toString(), { highlight: "foreground" });
+                                Print.success(parsedPaths, { highlight: "foreground" });
                                 Print.success("SUCCESS: Pathmap file has been created successfully.", {
                                     highlight: "background",
                                     spacing: true,

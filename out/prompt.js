@@ -127,14 +127,14 @@ export function prompt() {
     });
 }
 function validateConfig(config) {
-    var _a, _b;
+    var _a;
     var result = PathmapConfig.safeParse(config);
     if (result.success === false) {
         Print.error("EXCEPTION: Invalid configuration. (1015)", {
             highlight: "background",
             spacing: true,
         });
-        Print.error((_b = (_a = result.error) === null || _a === void 0 ? void 0 : _a.issues) === null || _b === void 0 ? void 0 : _b.toString(), {
+        Print.error((_a = result.error) === null || _a === void 0 ? void 0 : _a.issues, {
             highlight: "foreground",
         });
         process.exit(12);
