@@ -35,6 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { gen } from "./pathgen.js";
+import { Print } from "./print.js";
 import { prompt } from "./prompt.js";
 export function pathmap() {
     return __awaiter(this, void 0, void 0, function () {
@@ -43,7 +44,10 @@ export function pathmap() {
             switch (_b.label) {
                 case 0:
                     if (process.stdout.isTTY === false) {
-                        console.error("\x1b[41m", "ERROR: Something went wrong. (3000)", "\x1b[0m");
+                        Print.error("ERROR: Something went wrong. (3000)", {
+                            highlight: "background",
+                            spacing: false,
+                        });
                         process.exit(1);
                     }
                     return [4 /*yield*/, prompt()];
@@ -66,12 +70,10 @@ function validatePaths(_a) {
     var pathToPages = _a.pathToPages, pathToSave = _a.pathToSave;
     var isValidPathToPages = /^((\/|\.|\.{2}|[\w\d]).+)?pages$/.test(pathToPages);
     var isValidPathToSave = /^((\/|\.|\.{2}|[\w\d]).+)?[\w\d-]\.json$/.test(pathToSave);
-    if (!isValidPathToPages) {
-        console.error("\n", "\x1b[41m", "EXCEPTION: The given path '".concat(pathToPages, "' is invalid. (1012)"), "\x1b[0m", "\n");
-        process.exit(12);
-    }
-    else if (!isValidPathToSave) {
-        console.error("\n", "\x1b[41m", "EXCEPTION: The given path '".concat(pathToSave, "' is invalid. (1013)"), "\x1b[0m", "\n");
-        process.exit(12);
-    }
+    if (isValidPathToPages && isValidPathToSave)
+        return;
+    Print.error(!isValidPathToPages
+        ? "EXCEPTION: The given path '".concat(pathToPages, "' is invalid. (1012)")
+        : "EXCEPTION: The given path '".concat(pathToSave, "' is invalid. (1013)"), { highlight: "background", spacing: true });
+    process.exit(12);
 }

@@ -38,6 +38,7 @@ import inquirer from "inquirer";
 import { resolve } from "node:path";
 import { PathmapConfig } from "./models.js";
 import { checkFileExist } from "./check.js";
+import { Print } from "./print.js";
 export function prompt() {
     return __awaiter(this, void 0, void 0, function () {
         var config, result;
@@ -45,14 +46,20 @@ export function prompt() {
             switch (_a.label) {
                 case 0:
                     if (!checkFileExist("pathmap.config.js")) return [3 /*break*/, 2];
-                    console.log("\n \u001B[42m > pathmap.config.js has been detected. \u001B[0m \n");
+                    Print.success("> pathmap.config.js has been detected.", {
+                        highlight: "background",
+                        spacing: true,
+                    });
                     return [4 /*yield*/, import(resolve("pathmap.config.js"))];
                 case 1:
                     config = _a.sent();
                     result = validateConfig(config.default);
                     return [2 /*return*/, result];
                 case 2:
-                    console.log("\n \u001B[33m INFO: pathmap.config.js has not been found. \u001B[0m \n");
+                    Print.info("INFO: pathmap.config.js has not been found.", {
+                        highlight: "background",
+                        spacing: true,
+                    });
                     return [4 /*yield*/, inquirer.prompt([
                             {
                                 type: "input",
@@ -120,10 +127,16 @@ export function prompt() {
     });
 }
 function validateConfig(config) {
+    var _a, _b;
     var result = PathmapConfig.safeParse(config);
     if (result.success === false) {
-        console.error("\n", "\x1b[41m", "EXCEPTION: Invalid configuration. (1015)", "\x1b[0m");
-        console.error(result.error.issues);
+        Print.error("EXCEPTION: Invalid configuration. (1015)", {
+            highlight: "background",
+            spacing: true,
+        });
+        Print.error((_b = (_a = result.error) === null || _a === void 0 ? void 0 : _a.issues) === null || _b === void 0 ? void 0 : _b.toString(), {
+            highlight: "foreground",
+        });
         process.exit(12);
     }
     return config;

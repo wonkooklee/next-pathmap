@@ -1,9 +1,13 @@
 import { gen } from "./pathgen.js";
+import { Print } from "./print.js";
 import { prompt } from "./prompt.js";
 
 export async function pathmap() {
   if (process.stdout.isTTY === false) {
-    console.error("\x1b[41m", "ERROR: Something went wrong. (3000)", "\x1b[0m");
+    Print.error("ERROR: Something went wrong. (3000)", {
+      highlight: "background",
+      spacing: false,
+    });
     process.exit(1);
   }
 
@@ -35,23 +39,14 @@ function validatePaths({
     pathToSave
   );
 
-  if (!isValidPathToPages) {
-    console.error(
-      `\n`,
-      "\x1b[41m",
-      `EXCEPTION: The given path '${pathToPages}' is invalid. (1012)`,
-      "\x1b[0m",
-      `\n`
-    );
-    process.exit(12);
-  } else if (!isValidPathToSave) {
-    console.error(
-      `\n`,
-      "\x1b[41m",
-      `EXCEPTION: The given path '${pathToSave}' is invalid. (1013)`,
-      "\x1b[0m",
-      `\n`
-    );
-    process.exit(12);
-  }
+  if (isValidPathToPages && isValidPathToSave) return;
+
+  Print.error(
+    !isValidPathToPages
+      ? `EXCEPTION: The given path '${pathToPages}' is invalid. (1012)`
+      : `EXCEPTION: The given path '${pathToSave}' is invalid. (1013)`,
+    { highlight: "background", spacing: true }
+  );
+
+  process.exit(12);
 }

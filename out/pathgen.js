@@ -57,6 +57,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 import { existsSync, mkdirSync, readFileSync, writeFile } from "node:fs";
 import { globby } from "globby";
 import jsonFormat from "json-format";
+import { Print } from "./print";
 function processing(paths, existingPaths, schema) {
     return paths.reduce(function (acc, path) {
         var query = trimmingDynamicRoutes(path).query;
@@ -114,7 +115,10 @@ export function gen(_a) {
                 case 1:
                     pages = _b.sent();
                     if (pages.length === 0) {
-                        console.error("\n", "\x1b[41m", "EXCEPTION: The given directory has no matched page files. (1002)", "\x1b[0m", "\n");
+                        Print.error("EXCEPTION: The given directory has no matched page files. (1002)", {
+                            highlight: "background",
+                            spacing: true,
+                        });
                         process.exit(12);
                     }
                     mkdirRecursively(normalizeSavePath(pathToSave));
@@ -131,14 +135,20 @@ export function gen(_a) {
                     });
                     return [4 /*yield*/, writeFile(pathToSave, jsonFormat(processing(parsedPaths, existingPaths, schema)), { encoding: "utf-8" }, function (err) {
                             if (err) {
-                                console.error("\n", "\x1b[41m", "ERROR: Could not save the pathmap file to the given directory. (3002)", "\x1b[0m", "\n");
-                                console.error(err);
+                                Print.error("ERROR: Could not save the pathmap file to the given directory. (3002)", {
+                                    highlight: "background",
+                                    spacing: true,
+                                });
+                                Print.error(err === null || err === void 0 ? void 0 : err.message, { highlight: "foreground" });
                                 process.exit(12);
                             }
                             else {
-                                console.log(parsedPaths);
-                                console.log("\n", "\x1b[42m", "SUCCESS: Pathmap file has been created successfully.", "\x1b[0m", "\n");
-                                console.log("\x1b[32m", "OUTPUT: ./".concat(pathToSave), "\x1b[0m");
+                                Print.success(parsedPaths === null || parsedPaths === void 0 ? void 0 : parsedPaths.toString(), { highlight: "foreground" });
+                                Print.success("SUCCESS: Pathmap file has been created successfully.", {
+                                    highlight: "background",
+                                    spacing: true,
+                                });
+                                Print.success("OUTPUT: ./".concat(pathToSave), { highlight: "foreground" });
                             }
                         })];
                 case 3:

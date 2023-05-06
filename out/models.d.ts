@@ -6,16 +6,16 @@ export declare const PathmapConfig: z.ZodObject<{
     excludes: z.ZodArray<z.ZodString, "many">;
     schema: z.ZodObject<{}, "strip", z.ZodTypeAny, {}, {}>;
 }, "strip", z.ZodTypeAny, {
+    includes: string[];
+    schema: {};
     pathToPages: string;
     pathToSave: string;
-    includes: string[];
     excludes: string[];
-    schema: {};
 }, {
+    includes: string[];
+    schema: {};
     pathToPages: string;
     pathToSave: string;
-    includes: string[];
     excludes: string[];
-    schema: {};
 }>;
 export type PathmapConfigType = z.infer<typeof PathmapConfig>;

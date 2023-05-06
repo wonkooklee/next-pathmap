@@ -2,20 +2,23 @@ import inquirer from "inquirer";
 import { resolve } from "node:path";
 import { PathmapConfig, PathmapConfigType } from "./models.js";
 import { checkFileExist } from "./check.js";
+import { Print } from "./print.js";
 
 export async function prompt() {
   if (checkFileExist("pathmap.config.js")) {
-    console.log(
-      `\n \x1b[42m > pathmap.config.js has been detected. \x1b[0m \n`
-    );
+    Print.success("> pathmap.config.js has been detected.", {
+      highlight: "background",
+      spacing: true,
+    });
     const config = await import(resolve("pathmap.config.js"));
     const result = validateConfig(config.default);
     return result;
   }
 
-  console.log(
-    `\n \x1b[33m INFO: pathmap.config.js has not been found. \x1b[0m \n`
-  );
+  Print.info("INFO: pathmap.config.js has not been found.", {
+    highlight: "background",
+    spacing: true,
+  });
 
   return await inquirer.prompt([
     {
@@ -84,13 +87,14 @@ function validateConfig(config: PathmapConfigType) {
   const result = PathmapConfig.safeParse(config);
 
   if (result.success === false) {
-    console.error(
-      `\n`,
-      "\x1b[41m",
-      `EXCEPTION: Invalid configuration. (1015)`,
-      "\x1b[0m"
-    );
-    console.error(result.error.issues);
+    Print.error(`EXCEPTION: Invalid configuration. (1015)`, {
+      highlight: "background",
+      spacing: true,
+    });
+    Print.error(result.error?.issues?.toString(), {
+      highlight: "foreground",
+    });
+
     process.exit(12);
   }
 
