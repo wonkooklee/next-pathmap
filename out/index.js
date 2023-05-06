@@ -53,7 +53,7 @@ export function pathmap() {
                     gen({
                         pathToPages: pathToPages,
                         pathToSave: pathToSave,
-                        includes: includes,
+                        includes: Array.isArray(includes) ? includes : [includes],
                         excludes: excludes,
                         schema: schema,
                     });

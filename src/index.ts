@@ -15,7 +15,7 @@ export async function pathmap() {
   gen({
     pathToPages,
     pathToSave,
-    includes,
+    includes: Array.isArray(includes) ? includes : [includes],
     excludes,
     schema,
   });
