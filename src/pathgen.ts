@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFile } from "node:fs";
 import { globby } from "globby";
 import jsonFormat from "json-format";
 import { PathmapConfigType } from "./models";
-import { Print } from "./print";
+import { Print } from "./print.js";
 
 function processing(
   paths: string[],
