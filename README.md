@@ -155,4 +155,5 @@ export default function InsurancePage() {
 
 © WONKOOK LEE
 
+- Powered by Bash in iPad
 <br />
