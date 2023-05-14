@@ -6,6 +6,7 @@
 node_modules
 
 # Compiled and temporary files
+out
 .tmp
 
 # Other files
