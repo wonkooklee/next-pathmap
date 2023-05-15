@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 import { resolve } from "node:path";
-import { PathmapConfig, PathmapConfigType } from "./models.js";
+import { PathmapConfig, type PathmapConfigType } from "./models.js";
 import { checkFileExist } from "./check.js";
 import { Print } from "./print.js";
 

@@ -16,7 +16,9 @@
   "bin": "out/bin.js",
   "types": "out/index.d.ts",
   "scripts": {
-    "build": "rm -rf out && npx tsc"
+    "build": "tsc -p tsconfig.build.json",
+    "prebuild": "node -e \"fs.rmSync('out', { recursive: true, force: true })\"",
+    "typecheck": "tsc"
   },
   "keywords": [
     "generator",
