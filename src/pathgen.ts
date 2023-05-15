@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFile } from "node:fs";
 import { globby } from "globby";
 import jsonFormat from "json-format";
-import { PathmapConfigType } from "./models.js";
+import type { PathmapConfigType } from "./models.js";
 import { Print } from "./print.js";
 
 function processing(
@@ -15,7 +15,8 @@ function processing(
     const segments = path.split("/").slice(1);
     const category = categories
       ?.map((segment, idx) => {
-        return segment[segments[idx]];
+        const key = segments[idx];
+        return key === undefined ? undefined : segment[key];
       })
       .filter((seg) => seg);
     acc[path] = {
