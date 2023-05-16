@@ -40,11 +40,15 @@ You can run the binary without installation via the npx command. Or you can use 
 ```sh
 $ npx next-pathmap
 ```
+
 or
+
 ```sh
 $ npm install -D next-pathmap
 ```
+
 You can also enter the command directly through the global installation.
+
 ```sh
 $ npm install -g next-path
 $ next-path
@@ -135,6 +139,7 @@ All paths in the project are mapped to a JSON object as shown below. Use it as m
 ```
 
 ### Example
+
 ```js
 import pathmap from '@/pathmap/pathmap.json';
 
@@ -149,11 +154,9 @@ export default function InsurancePage() {
 
 ```
 
-
-
 <br />
 
 © WONKOOK LEE
 
 - Powered by Bash in iPad
-<br />
+  <br />
