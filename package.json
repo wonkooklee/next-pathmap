@@ -20,7 +20,9 @@
     "prebuild": "node -e \"fs.rmSync('out', { recursive: true, force: true })\"",
     "typecheck": "tsc",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [
     "generator",
@@ -41,7 +43,8 @@
   "devDependencies": {
     "@types/node": "^18.16.3",
     "typescript": "^5.0.4",
-    "prettier": "^2.8.8"
+    "prettier": "^2.8.8",
+    "vitest": "^0.31.0"
   },
   "publishConfig": {
     "@wonkooklee:registry": "https://npm.pkg.github.com"
