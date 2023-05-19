@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { buildPathmap, serializePathmap } from "../src/pathmap.js";
+import {
+  buildPathmap,
+  diffPathmaps,
+  serializePathmap,
+} from "../src/pathmap.js";
 import { extractParams, type Route } from "../src/routes.js";
 
 function route(path: string): Route {
@@ -78,6 +82,14 @@ describe("buildPathmap", () => {
     });
 
     expect(pathmap["/"]).not.toHaveProperty("categories");
+  });
+});
+
+describe("diffPathmaps", () => {
+  it("lists added and removed routes", () => {
+    expect(
+      diffPathmaps({ "/": {}, "/old": {} }, { "/": {}, "/new": {}, "/a": {} })
+    ).toEqual({ added: ["/a", "/new"], removed: ["/old"] });
   });
 });
 

@@ -44,6 +44,19 @@ export function buildPathmap(
   return pathmap;
 }
 
+export function diffPathmaps(
+  previous: Record<string, unknown>,
+  next: Record<string, unknown>
+): { added: string[]; removed: string[] } {
+  const missingFrom = (target: Record<string, unknown>) => (path: string) =>
+    !Object.hasOwn(target, path);
+
+  return {
+    added: Object.keys(next).filter(missingFrom(previous)).sort(compare),
+    removed: Object.keys(previous).filter(missingFrom(next)).sort(compare),
+  };
+}
+
 export function serializePathmap(pathmap: Pathmap): string {
   return `${JSON.stringify(pathmap, null, 2)}\n`;
 }
