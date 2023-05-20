@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { resolveConfig } from "../src/config.js";
+import { loadConfig, resolveConfig } from "../src/config.js";
 import { createProject, page, thrownBy } from "./utils.js";
 
 describe("resolveConfig", () => {
@@ -54,6 +54,67 @@ describe("resolveConfig", () => {
 
     expect(thrownBy(() => resolveConfig({}, cwd))).toMatchObject({
       code: "ROUTER_DIR_NOT_FOUND",
+    });
+  });
+});
+
+describe("loadConfig", () => {
+  it("returns null without a config file", async () => {
+    const cwd = await createProject({});
+
+    await expect(loadConfig(cwd)).resolves.toBeNull();
+  });
+
+  it.each([
+    ["pathmap.config.mjs", "export default { output: 'a.json' };"],
+    ["pathmap.config.cjs", "module.exports = { output: 'a.json' };"],
+  ])("loads %s", async (name, source) => {
+    const cwd = await createProject({ [name]: source });
+
+    await expect(loadConfig(cwd)).resolves.toEqual({
+      config: { output: "a.json" },
+      file: join(cwd, name),
+    });
+  });
+
+  it("loads an explicit config file", async () => {
+    const cwd = await createProject({
+      "pathmap.config.mjs": "export default { output: 'a.json' };",
+      "config/pathmap.mjs": "export default { output: 'b.json' };",
+    });
+
+    await expect(loadConfig(cwd, "config/pathmap.mjs")).resolves.toEqual({
+      config: { output: "b.json" },
+      file: join(cwd, "config/pathmap.mjs"),
+    });
+  });
+
+  it("rejects a missing explicit config file", async () => {
+    const cwd = await createProject({});
+
+    await expect(loadConfig(cwd, "pathmap.mjs")).rejects.toMatchObject({
+      code: "CONFIG_LOAD_FAILED",
+    });
+  });
+
+  it("wraps errors thrown while importing", async () => {
+    const cwd = await createProject({
+      "pathmap.config.mjs": "throw new Error('boom');",
+    });
+
+    await expect(loadConfig(cwd)).rejects.toMatchObject({
+      code: "CONFIG_LOAD_FAILED",
+      cause: expect.objectContaining({ message: "boom" }) as unknown,
+    });
+  });
+
+  it("requires a default export", async () => {
+    const cwd = await createProject({
+      "pathmap.config.mjs": "export const config = {};",
+    });
+
+    await expect(loadConfig(cwd)).rejects.toMatchObject({
+      code: "INVALID_CONFIG",
     });
   });
 });

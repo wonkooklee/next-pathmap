@@ -1,5 +1,6 @@
 export type PathmapErrorCode =
   | "INVALID_CONFIG"
+  | "CONFIG_LOAD_FAILED"
   | "ROUTER_DIR_NOT_FOUND"
   | "NO_ROUTES_FOUND";
 
