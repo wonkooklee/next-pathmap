@@ -1,5 +1,5 @@
-import { statSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { existsSync, statSync } from "node:fs";
+import { join, relative, resolve } from "node:path";
 import { z } from "zod";
 import { PathmapError } from "./errors.js";
 
@@ -48,6 +48,17 @@ export interface ResolvedConfig {
   categories: Array<Record<string, string>> | undefined;
 }
 
+export interface LoadedConfig {
+  config: unknown;
+  file: string;
+}
+
+export const CONFIG_FILES = [
+  "pathmap.config.js",
+  "pathmap.config.mjs",
+  "pathmap.config.cjs",
+] as const;
+
 const configSchema = z
   .object({
     pagesDir: z.string().min(1).optional(),
@@ -80,6 +91,45 @@ const configSchema = z
     categories: z.array(z.record(z.string())).optional(),
   })
   .strict();
+
+export async function loadConfig(
+  cwd: string,
+  file?: string
+): Promise<LoadedConfig | null> {
+  const path =
+    file === undefined
+      ? CONFIG_FILES.map((name) => join(cwd, name)).find((candidate) =>
+          existsSync(candidate)
+        )
+      : resolve(cwd, file);
+
+  if (path === undefined) return null;
+
+  const name = relative(cwd, path);
+  if (!existsSync(path)) {
+    throw new PathmapError(
+      "CONFIG_LOAD_FAILED",
+      `Config file ${name} does not exist.`
+    );
+  }
+
+  let mod: { default?: unknown };
+  try {
+    mod = (await import(path)) as { default?: unknown };
+  } catch (error) {
+    throw new PathmapError("CONFIG_LOAD_FAILED", `Failed to load ${name}.`, {
+      cause: error,
+    });
+  }
+
+  if (mod.default === undefined) {
+    throw new PathmapError(
+      "INVALID_CONFIG",
+      `${name} must have a default export.`
+    );
+  }
+  return { config: mod.default, file: path };
+}
 
 export function resolveConfig(input: unknown, cwd: string): ResolvedConfig {
   const result = configSchema.safeParse(input);
