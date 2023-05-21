@@ -1,3 +1,4 @@
+import { PathmapError } from "./errors.js";
 import type { Route } from "./routes.js";
 
 export type PathmapEntry<TEntry extends object = Record<string, unknown>> =
@@ -59,6 +60,30 @@ export function diffPathmaps(
 
 export function serializePathmap(pathmap: Pathmap): string {
   return `${JSON.stringify(pathmap, null, 2)}\n`;
+}
+
+export function parsePathmap(
+  text: string,
+  file: string
+): Record<string, unknown> {
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch (error) {
+    throw new PathmapError(
+      "INVALID_OUTPUT_FILE",
+      `${file} is not valid JSON. Fix or delete it; it is left untouched until then.`,
+      { cause: error }
+    );
+  }
+
+  if (!isRecord(value)) {
+    throw new PathmapError(
+      "INVALID_OUTPUT_FILE",
+      `${file} must contain a JSON object keyed by route.`
+    );
+  }
+  return value;
 }
 
 function resolveCategories(

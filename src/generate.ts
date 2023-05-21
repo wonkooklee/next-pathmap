@@ -5,6 +5,7 @@ import { PathmapError } from "./errors.js";
 import {
   buildPathmap,
   diffPathmaps,
+  parsePathmap,
   serializePathmap,
   type Pathmap,
 } from "./pathmap.js";
@@ -59,7 +60,10 @@ export async function generate(
   }
 
   const previousText = await readTextIfExists(config.output);
-  const previous = previousText === null ? {} : parsePrevious(previousText);
+  const previous =
+    previousText === null
+      ? {}
+      : parsePathmap(previousText, relative(root, config.output));
 
   const pathmap = buildPathmap(routes, {
     defaults: config.defaults,
@@ -82,17 +86,6 @@ export async function generate(
     ...diffPathmaps(previous, pathmap),
     changed,
   };
-}
-
-function parsePrevious(text: string): Record<string, unknown> {
-  try {
-    const value: unknown = JSON.parse(text);
-    return typeof value === "object" && value !== null && !Array.isArray(value)
-      ? (value as Record<string, unknown>)
-      : {};
-  } catch {
-    return {};
-  }
 }
 
 async function readTextIfExists(file: string): Promise<string | null> {

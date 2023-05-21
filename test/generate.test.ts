@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { generate } from "../src/generate.js";
@@ -107,5 +107,17 @@ describe("generate", () => {
     await expect(generate({ cwd })).rejects.toMatchObject({
       code: "NO_ROUTES_FOUND",
     });
+  });
+
+  it("never overwrites an unreadable output file", async () => {
+    const cwd = await createProject({ "pages/index.tsx": page });
+    const output = join(cwd, "pathmap/pathmap.json");
+    await generate({ cwd });
+    await writeFile(output, "{ unfinished edit");
+
+    await expect(generate({ cwd })).rejects.toMatchObject({
+      code: "INVALID_OUTPUT_FILE",
+    });
+    await expect(readFile(output, "utf8")).resolves.toBe("{ unfinished edit");
   });
 });
