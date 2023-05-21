@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { PathmapError } from "../src/errors.js";
 import {
   buildPathmap,
   diffPathmaps,
+  parsePathmap,
   serializePathmap,
 } from "../src/pathmap.js";
 import { extractParams, type Route } from "../src/routes.js";
@@ -98,5 +100,15 @@ describe("serializePathmap", () => {
     expect(serializePathmap({ "/": { query: [] } })).toBe(
       '{\n  "/": {\n    "query": []\n  }\n}\n'
     );
+  });
+});
+
+describe("parsePathmap", () => {
+  it("returns the parsed object", () => {
+    expect(parsePathmap('{ "/": {} }', "pathmap.json")).toEqual({ "/": {} });
+  });
+
+  it.each(["{ broken", "[]", "null", '"text"'])("rejects %s", (text) => {
+    expect(() => parsePathmap(text, "pathmap.json")).toThrowError(PathmapError);
   });
 });
