@@ -1,29 +1,7 @@
 {
   "name": "next-pathmap",
-  "license": "MIT",
   "version": "1.1.29",
   "description": "Pathmap Generator for Next.js Pages",
-  "repository": "wonkooklee/next-pathmap",
-  "author": {
-    "name": "Wonkook Lee",
-    "url": "https://github.com/wonkooklee",
-    "email": "const.wonkook@gmail.com"
-  },
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "main": "out/index.js",
-  "bin": "out/bin.js",
-  "types": "out/index.d.ts",
-  "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "prebuild": "node -e \"fs.rmSync('out', { recursive: true, force: true })\"",
-    "typecheck": "tsc",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "test": "vitest run",
-    "test:watch": "vitest"
-  },
   "keywords": [
     "generator",
     "next.js",
@@ -33,7 +11,40 @@
     "pathmap",
     "route"
   ],
+  "repository": "wonkooklee/next-pathmap",
+  "license": "MIT",
+  "author": {
+    "name": "Wonkook Lee",
+    "url": "https://github.com/wonkooklee",
+    "email": "const.wonkook@gmail.com"
+  },
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": "./dist/bin.js",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prebuild": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\"",
+    "typecheck": "tsc",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev": "tsc -p tsconfig.build.json --watch"
+  },
   "dependencies": {
     "globby": "13.1.4",
     "inquirer": "9.2.0",

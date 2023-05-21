@@ -1,10 +1,16 @@
-# IDE & editors
-.idea
-.vscode
-
 # Dependencies
 node_modules
 
-# Compiled and temporary files
+# Build output
+dist
 out
-.tmp
+coverage
+*.tsbuildinfo
+
+# Logs
+npm-debug.log*
+
+# Editors and OS
+.idea
+.vscode
+.DS_Store
