@@ -9,6 +9,7 @@ import { generate, type GenerateResult } from "./generate.js";
 interface GenerateFlags {
   cwd?: string;
   config?: string;
+  check?: boolean;
 }
 
 const { version } = JSON.parse(
@@ -21,6 +22,7 @@ cli
   .command("", "Generate the pathmap")
   .option("--cwd <dir>", "Project root")
   .option("--config <file>", "Config file to use")
+  .option("--check", "Fail instead of writing when the pathmap is outdated")
   .action(async (flags: GenerateFlags) => {
     if (cli.args.length > 0) {
       usageError(`Unknown command "${cli.args.join(" ")}"`);
@@ -28,7 +30,12 @@ cli
     }
 
     const cwd = resolve(flags.cwd ?? ".");
-    report(await generate({ cwd, configFile: flags.config }), cwd);
+    const result = await generate({
+      cwd,
+      configFile: flags.config,
+      write: !flags.check,
+    });
+    report(result, cwd, flags.check === true);
   });
 
 cli.help();
@@ -45,7 +52,7 @@ try {
   }
 }
 
-function report(result: GenerateResult, cwd: string): void {
+function report(result: GenerateResult, cwd: string, check: boolean): void {
   const output = relative(cwd, result.output);
   const count = pc.dim(
     `(${result.routes.length} route${result.routes.length === 1 ? "" : "s"})`
@@ -57,6 +64,15 @@ function report(result: GenerateResult, cwd: string): void {
 
   if (!result.changed) {
     console.log(`${pc.green("✔")} ${output} is up to date ${count}`);
+    return;
+  }
+
+  if (check) {
+    printChanges(result);
+    console.error(
+      `${pc.red("✖")} ${output} is out of date. Run next-pathmap to update it.`
+    );
+    process.exitCode = 1;
     return;
   }
 
