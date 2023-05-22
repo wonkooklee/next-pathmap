@@ -3,6 +3,7 @@ export type PathmapErrorCode =
   | "CONFIG_LOAD_FAILED"
   | "ROUTER_DIR_NOT_FOUND"
   | "NO_ROUTES_FOUND"
+  | "DUPLICATE_ROUTE"
   | "INVALID_OUTPUT_FILE";
 
 export class PathmapError extends Error {

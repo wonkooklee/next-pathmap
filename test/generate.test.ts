@@ -101,6 +101,19 @@ describe("generate", () => {
     });
   });
 
+  it("rejects files that resolve to the same path", async () => {
+    const cwd = await createProject({
+      "pages/about.tsx": page,
+      "pages/about/index.tsx": page,
+    });
+
+    await expect(generate({ cwd })).rejects.toMatchObject({
+      code: "DUPLICATE_ROUTE",
+      message:
+        "pages/about.tsx and pages/about/index.tsx both resolve to /about.",
+    });
+  });
+
   it("rejects a project without routes", async () => {
     const cwd = await createProject({ "pages/_app.tsx": page });
 
