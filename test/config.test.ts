@@ -56,6 +56,14 @@ describe("resolveConfig", () => {
       code: "ROUTER_DIR_NOT_FOUND",
     });
   });
+
+  it("points 1.x options to their replacements", async () => {
+    const cwd = await createProject({ "pages/index.tsx": page });
+
+    expect(() =>
+      resolveConfig({ pathToPages: "pages", pathToSave: "a.json" }, cwd)
+    ).toThrowError(/pathToPages -> pagesDir\n {2}- pathToSave -> output/);
+  });
 });
 
 describe("loadConfig", () => {

@@ -59,6 +59,14 @@ export const CONFIG_FILES = [
   "pathmap.config.cjs",
 ] as const;
 
+const LEGACY_OPTIONS: Record<string, string> = {
+  pathToPages: "pagesDir",
+  pathToSave: "output",
+  includes: "pageExtensions",
+  excludes: "exclude",
+  schema: "defaults",
+};
+
 const configSchema = z
   .object({
     pagesDir: z.string().min(1).optional(),
@@ -132,6 +140,8 @@ export async function loadConfig(
 }
 
 export function resolveConfig(input: unknown, cwd: string): ResolvedConfig {
+  assertNoLegacyOptions(input);
+
   const result = configSchema.safeParse(input);
   if (!result.success) {
     const issues = result.error.issues.map(
@@ -177,6 +187,25 @@ function resolvePagesDir(cwd: string, pagesDir: string | undefined): string {
     );
   }
   return detected;
+}
+
+function assertNoLegacyOptions(input: unknown): void {
+  if (typeof input !== "object" || input === null) return;
+
+  const renamed = Object.keys(input)
+    .filter((key) => Object.hasOwn(LEGACY_OPTIONS, key))
+    .map((key) => `  - ${key} -> ${LEGACY_OPTIONS[key] ?? ""}`);
+
+  if (renamed.length > 0) {
+    throw new PathmapError(
+      "INVALID_CONFIG",
+      [
+        "These options were renamed in next-pathmap 2.0:",
+        ...renamed,
+        "See https://github.com/wonkooklee/next-pathmap#migrating-from-1x",
+      ].join("\n")
+    );
+  }
 }
 
 function isDirectory(path: string): boolean {
