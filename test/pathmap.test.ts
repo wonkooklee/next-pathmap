@@ -9,7 +9,7 @@ import {
 import { extractParams, type Route } from "../src/routes.js";
 
 function route(path: string): Route {
-  return { path, params: extractParams(path), file: "" };
+  return { path, params: extractParams(path), file: "", router: "pages" };
 }
 
 describe("buildPathmap", () => {

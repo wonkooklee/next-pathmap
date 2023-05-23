@@ -53,9 +53,10 @@ export async function generate(
 
   const routes = await scanRoutes(config);
   if (routes.length === 0) {
+    const dirs = config.routers.map(({ dir }) => relative(root, dir));
     throw new PathmapError(
       "NO_ROUTES_FOUND",
-      `No routes were found in ${relative(root, config.pagesDir)}.`
+      `No routes were found in ${dirs.join(" or ")}.`
     );
   }
 
