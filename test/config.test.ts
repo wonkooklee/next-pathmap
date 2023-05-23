@@ -9,7 +9,7 @@ describe("resolveConfig", () => {
 
     expect(resolveConfig({}, cwd)).toEqual({
       cwd,
-      pagesDir: join(cwd, "pages"),
+      routers: [{ kind: "pages", dir: join(cwd, "pages") }],
       output: join(cwd, "pathmap/pathmap.json"),
       pageExtensions: ["tsx", "ts", "jsx", "js"],
       exclude: [],
@@ -18,27 +18,56 @@ describe("resolveConfig", () => {
     });
   });
 
-  it("prefers pages at the project root over src/pages", async () => {
+  it("detects both routers at the project root", async () => {
     const cwd = await createProject({
-      "pages/index.tsx": page,
-      "src/pages/index.tsx": page,
+      "app/page.tsx": page,
+      "pages/about.tsx": page,
     });
 
-    expect(resolveConfig({}, cwd).pagesDir).toBe(join(cwd, "pages"));
+    expect(resolveConfig({}, cwd).routers).toEqual([
+      { kind: "app", dir: join(cwd, "app") },
+      { kind: "pages", dir: join(cwd, "pages") },
+    ]);
   });
 
-  it("falls back to src/pages", async () => {
-    const cwd = await createProject({ "src/pages/index.tsx": page });
+  it("falls back to src only when the root has no router", async () => {
+    const cwd = await createProject({
+      "src/app/page.tsx": page,
+      "src/pages/about.tsx": page,
+    });
 
-    expect(resolveConfig({}, cwd).pagesDir).toBe(join(cwd, "src/pages"));
+    expect(resolveConfig({}, cwd).routers).toEqual([
+      { kind: "app", dir: join(cwd, "src/app") },
+      { kind: "pages", dir: join(cwd, "src/pages") },
+    ]);
+
+    const mixed = await createProject({
+      "pages/index.tsx": page,
+      "src/app/page.tsx": page,
+    });
+
+    expect(resolveConfig({}, mixed).routers).toEqual([
+      { kind: "pages", dir: join(mixed, "pages") },
+    ]);
   });
 
-  it("uses an explicit pages directory", async () => {
+  it("skips a router set to false", async () => {
+    const cwd = await createProject({
+      "app/page.tsx": page,
+      "pages/about.tsx": page,
+    });
+
+    expect(resolveConfig({ appDir: false }, cwd).routers).toEqual([
+      { kind: "pages", dir: join(cwd, "pages") },
+    ]);
+  });
+
+  it("uses explicit router directories", async () => {
     const cwd = await createProject({ "web/routes/index.tsx": page });
 
-    expect(resolveConfig({ pagesDir: "web/routes" }, cwd).pagesDir).toBe(
-      join(cwd, "web/routes")
-    );
+    expect(resolveConfig({ pagesDir: "web/routes" }, cwd).routers).toEqual([
+      { kind: "pages", dir: join(cwd, "web/routes") },
+    ]);
   });
 
   it("rejects a missing explicit directory", async () => {
@@ -49,7 +78,7 @@ describe("resolveConfig", () => {
     ).toMatchObject({ code: "ROUTER_DIR_NOT_FOUND" });
   });
 
-  it("rejects a project without a pages directory", async () => {
+  it("rejects a project without routers", async () => {
     const cwd = await createProject({ "README.md": "" });
 
     expect(thrownBy(() => resolveConfig({}, cwd))).toMatchObject({

@@ -2,15 +2,23 @@ import { existsSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { z } from "zod";
 import { PathmapError } from "./errors.js";
+import type { RouterKind } from "./routes.js";
 
 export interface PathmapConfig<
   TEntry extends Record<string, unknown> = Record<string, unknown>
 > {
   /**
-   * Pages directory, relative to the project root. When omitted it is looked
-   * up the way Next.js does: `pages`, then `src/pages`.
+   * Pages Router directory, relative to the project root. When omitted it is
+   * looked up the way Next.js does: `pages`, then `src/pages`. `false` skips
+   * the Pages Router entirely.
    */
-  pagesDir?: string;
+  pagesDir?: string | false;
+  /**
+   * App Router directory, relative to the project root. When omitted it is
+   * looked up the way Next.js does: `app`, then `src/app`. `false` skips the
+   * App Router entirely.
+   */
+  appDir?: string | false;
   /**
    * File the pathmap is written to, relative to the project root.
    * @default "pathmap/pathmap.json"
@@ -22,8 +30,8 @@ export interface PathmapConfig<
    */
   pageExtensions?: string[];
   /**
-   * Glob patterns, relative to the pages directory, of files that should not
-   * appear in the pathmap.
+   * Glob patterns, relative to each router directory, of files that should
+   * not appear in the pathmap.
    */
   exclude?: string[];
   /**
@@ -38,9 +46,14 @@ export interface PathmapConfig<
   categories?: Array<Record<string, string>>;
 }
 
+export interface RouterSource {
+  kind: RouterKind;
+  dir: string;
+}
+
 export interface ResolvedConfig {
   cwd: string;
-  pagesDir: string;
+  routers: RouterSource[];
   output: string;
   pageExtensions: string[];
   exclude: string[];
@@ -67,9 +80,12 @@ const LEGACY_OPTIONS: Record<string, string> = {
   schema: "defaults",
 };
 
+const routerDir = z.union([z.string().min(1), z.literal(false)]).optional();
+
 const configSchema = z
   .object({
-    pagesDir: z.string().min(1).optional(),
+    pagesDir: routerDir,
+    appDir: routerDir,
     output: z
       .string()
       .endsWith(".json", { message: "Expected a path to a .json file" })
@@ -156,7 +172,7 @@ export function resolveConfig(input: unknown, cwd: string): ResolvedConfig {
   const config = result.data;
   return {
     cwd,
-    pagesDir: resolvePagesDir(cwd, config.pagesDir),
+    routers: resolveRouters(cwd, config.pagesDir, config.appDir),
     output: resolve(cwd, config.output),
     pageExtensions: config.pageExtensions,
     exclude: config.exclude,
@@ -165,28 +181,57 @@ export function resolveConfig(input: unknown, cwd: string): ResolvedConfig {
   };
 }
 
-function resolvePagesDir(cwd: string, pagesDir: string | undefined): string {
-  if (pagesDir !== undefined) {
-    const dir = resolve(cwd, pagesDir);
+/**
+ * Mirrors Next.js: `app` and `pages` at the project root win, and `src` is
+ * only considered when neither of them exists there.
+ */
+export function detectRouterDirs(
+  cwd: string
+): Partial<Record<RouterKind, string>> {
+  for (const base of [cwd, join(cwd, "src")]) {
+    const found: Partial<Record<RouterKind, string>> = {};
+    for (const kind of ["app", "pages"] as const) {
+      const dir = join(base, kind);
+      if (isDirectory(dir)) found[kind] = dir;
+    }
+    if (Object.keys(found).length > 0) return found;
+  }
+  return {};
+}
+
+function resolveRouters(
+  cwd: string,
+  pagesDir: string | false | undefined,
+  appDir: string | false | undefined
+): RouterSource[] {
+  const detected =
+    pagesDir === undefined || appDir === undefined ? detectRouterDirs(cwd) : {};
+
+  const routers: RouterSource[] = [];
+  for (const [kind, option] of [
+    ["app", appDir],
+    ["pages", pagesDir],
+  ] as const) {
+    if (option === false) continue;
+
+    const dir = option === undefined ? detected[kind] : resolve(cwd, option);
+    if (dir === undefined) continue;
     if (!isDirectory(dir)) {
       throw new PathmapError(
         "ROUTER_DIR_NOT_FOUND",
-        `The pages directory ${pagesDir} does not exist.`
+        `The ${kind} directory ${option ?? dir} does not exist.`
       );
     }
-    return dir;
+    routers.push({ kind, dir });
   }
 
-  const detected = [join(cwd, "pages"), join(cwd, "src", "pages")].find(
-    isDirectory
-  );
-  if (detected === undefined) {
+  if (routers.length === 0) {
     throw new PathmapError(
       "ROUTER_DIR_NOT_FOUND",
-      `Could not find a "pages" directory in ${cwd}. Set "pagesDir" in the config.`
+      `Could not find an "app" or "pages" directory in ${cwd}. Set "appDir" or "pagesDir" in the config.`
     );
   }
-  return detected;
+  return routers;
 }
 
 function assertNoLegacyOptions(input: unknown): void {

@@ -36,6 +36,37 @@ describe("generate", () => {
     });
   });
 
+  it("writes routes from both routers", async () => {
+    const cwd = await createProject({
+      "app/page.tsx": page,
+      "app/(shop)/products/[id]/page.tsx": page,
+      "app/layout.tsx": page,
+      "pages/legacy/index.tsx": page,
+      "pages/api/hello.ts": page,
+      "pages/_app.tsx": page,
+    });
+
+    const result = await generate({ cwd });
+
+    expect(result).toMatchObject({
+      output: join(cwd, "pathmap/pathmap.json"),
+      configFile: null,
+      added: ["/", "/legacy", "/products/[id]"],
+      removed: [],
+      changed: true,
+    });
+    expect(result.routes.map(({ file }) => file)).toEqual([
+      "app/(shop)/products/[id]/page.tsx",
+      "app/page.tsx",
+      "pages/legacy/index.tsx",
+    ]);
+    await expect(readPathmap(cwd)).resolves.toEqual({
+      "/": { query: [] },
+      "/legacy": { query: [] },
+      "/products/[id]": { query: ["id"] },
+    });
+  });
+
   it("keeps hand-edited fields and drops deleted routes", async () => {
     const cwd = await createProject({
       "pages/index.tsx": page,
@@ -111,6 +142,19 @@ describe("generate", () => {
       code: "DUPLICATE_ROUTE",
       message:
         "pages/about.tsx and pages/about/index.tsx both resolve to /about.",
+    });
+  });
+
+  it("rejects an app route that shadows a page", async () => {
+    const cwd = await createProject({
+      "app/(a)/about/page.tsx": page,
+      "pages/about.tsx": page,
+    });
+
+    await expect(generate({ cwd })).rejects.toMatchObject({
+      code: "DUPLICATE_ROUTE",
+      message:
+        "app/(a)/about/page.tsx and pages/about.tsx both resolve to /about.",
     });
   });
 

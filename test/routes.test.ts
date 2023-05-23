@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { extractParams, resolvePagePath } from "../src/routes.js";
+import { extractParams, resolveRoutePath } from "../src/routes.js";
 
 const extensions = ["tsx", "ts", "jsx", "js"];
 
-describe("resolvePagePath", () => {
+describe("resolveRoutePath for the pages router", () => {
   it.each([
     ["index.tsx", "/"],
     ["about.tsx", "/about"],
@@ -13,7 +13,7 @@ describe("resolvePagePath", () => {
     ["shop/[[...slug]].js", "/shop/[[...slug]]"],
     ["404.tsx", "/404"],
   ])("maps %s to %s", (file, path) => {
-    expect(resolvePagePath(file, extensions)).toBe(path);
+    expect(resolveRoutePath(file, "pages", extensions)).toBe(path);
   });
 
   it.each([
@@ -24,22 +24,54 @@ describe("resolvePagePath", () => {
     "api/users/[id].ts",
     "styles.module.css",
   ])("skips %s", (file) => {
-    expect(resolvePagePath(file, extensions)).toBeNull();
+    expect(resolveRoutePath(file, "pages", extensions)).toBeNull();
   });
 
   it("only accepts the configured page extensions", () => {
     const pageExtensions = ["page.tsx", "page.ts"];
 
-    expect(resolvePagePath("about.page.tsx", pageExtensions)).toBe("/about");
-    expect(resolvePagePath("blog/index.page.ts", pageExtensions)).toBe("/blog");
-    expect(resolvePagePath("_app.page.tsx", pageExtensions)).toBeNull();
-    expect(resolvePagePath("Header.tsx", pageExtensions)).toBeNull();
+    expect(resolveRoutePath("about.page.tsx", "pages", pageExtensions)).toBe(
+      "/about"
+    );
+    expect(
+      resolveRoutePath("blog/index.page.ts", "pages", pageExtensions)
+    ).toBe("/blog");
+    expect(resolveRoutePath("_app.page.tsx", "pages", pageExtensions)).toBe(
+      null
+    );
+    expect(resolveRoutePath("Header.tsx", "pages", pageExtensions)).toBeNull();
   });
 
   it("strips the longest matching extension", () => {
-    expect(resolvePagePath("about.page.tsx", ["tsx", "page.tsx"])).toBe(
-      "/about"
-    );
+    expect(
+      resolveRoutePath("about.page.tsx", "pages", ["tsx", "page.tsx"])
+    ).toBe("/about");
+  });
+});
+
+describe("resolveRoutePath for the app router", () => {
+  it.each([
+    ["page.tsx", "/"],
+    ["dashboard/page.tsx", "/dashboard"],
+    ["blog/[slug]/page.tsx", "/blog/[slug]"],
+    ["(marketing)/about/page.tsx", "/about"],
+    ["(shop)/(checkout)/cart/page.js", "/cart"],
+  ])("maps %s to %s", (file, path) => {
+    expect(resolveRoutePath(file, "app", extensions)).toBe(path);
+  });
+
+  it.each([
+    "layout.tsx",
+    "dashboard/loading.tsx",
+    "api/route.ts",
+    "_components/page.tsx",
+    "blog/_lib/page.tsx",
+    "@modal/login/page.tsx",
+    "(.)photo/[id]/page.tsx",
+    "feed/(..)photo/[id]/page.tsx",
+    "feed/(...)photo/[id]/page.tsx",
+  ])("skips %s", (file) => {
+    expect(resolveRoutePath(file, "app", extensions)).toBeNull();
   });
 });
 
