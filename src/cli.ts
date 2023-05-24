@@ -5,6 +5,7 @@ import { cac } from "cac";
 import pc from "picocolors";
 import { PathmapError } from "./errors.js";
 import { generate, type GenerateResult } from "./generate.js";
+import { init } from "./init.js";
 
 interface GenerateFlags {
   cwd?: string;
@@ -36,6 +37,15 @@ cli
       write: !flags.check,
     });
     report(result, cwd, flags.check === true);
+  });
+
+cli
+  .command("init", "Create pathmap.config.mjs for this project")
+  .option("--cwd <dir>", "Project root")
+  .action(async (flags: Pick<GenerateFlags, "cwd">) => {
+    const cwd = resolve(flags.cwd ?? ".");
+    const file = await init(cwd);
+    console.log(`${pc.green("✔")} Created ${relative(cwd, file)}`);
   });
 
 cli.help();
