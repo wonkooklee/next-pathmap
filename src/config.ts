@@ -1,5 +1,6 @@
 import { existsSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import { z } from "zod";
 import { PathmapError } from "./errors.js";
 import type { RouterKind } from "./routes.js";
@@ -139,7 +140,7 @@ export async function loadConfig(
 
   let mod: { default?: unknown };
   try {
-    mod = (await import(path)) as { default?: unknown };
+    mod = (await import(pathToFileURL(path).href)) as { default?: unknown };
   } catch (error) {
     throw new PathmapError("CONFIG_LOAD_FAILED", `Failed to load ${name}.`, {
       cause: error,
