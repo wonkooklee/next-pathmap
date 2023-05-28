@@ -86,6 +86,22 @@ describe("resolveConfig", () => {
     });
   });
 
+  it.each([
+    [{ output: "pathmap.js" }, "output"],
+    [{ pageExtensions: [".tsx"] }, "pageExtensions.0"],
+    [{ pageExtensions: [] }, "pageExtensions"],
+    [{ exclude: ["!**/*.test.tsx"] }, "exclude.0"],
+    [{ categories: [{ blog: 1 }] }, "categories.0.blog"],
+    [{ unknownOption: true }, "config"],
+  ])("reports invalid options in %j", async (input, path) => {
+    const cwd = await createProject({ "pages/index.tsx": page });
+
+    expect(thrownBy(() => resolveConfig(input, cwd))).toMatchObject({
+      code: "INVALID_CONFIG",
+      message: expect.stringContaining(`- ${path}:`) as string,
+    });
+  });
+
   it("points 1.x options to their replacements", async () => {
     const cwd = await createProject({ "pages/index.tsx": page });
 
