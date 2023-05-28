@@ -1,22 +1,29 @@
 {
   "name": "next-pathmap",
   "version": "1.1.29",
-  "description": "Pathmap Generator for Next.js Pages",
+  "description": "Generate a JSON map of every route in a Next.js project",
   "keywords": [
-    "generator",
-    "next.js",
     "next",
-    "pages",
-    "path",
+    "next.js",
+    "nextjs",
+    "routes",
     "pathmap",
-    "route"
+    "pages",
+    "app-router",
+    "generator",
+    "cli"
   ],
-  "repository": "wonkooklee/next-pathmap",
+  "homepage": "https://github.com/wonkooklee/next-pathmap#readme",
+  "bugs": "https://github.com/wonkooklee/next-pathmap/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wonkooklee/next-pathmap.git"
+  },
   "license": "MIT",
   "author": {
     "name": "Wonkook Lee",
-    "url": "https://github.com/wonkooklee",
-    "email": "const.wonkook@gmail.com"
+    "email": "const.wonkook@gmail.com",
+    "url": "https://github.com/wonkooklee"
   },
   "type": "module",
   "exports": {
