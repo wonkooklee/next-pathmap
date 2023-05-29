@@ -150,6 +150,27 @@ try {
 
 The package is ESM only.
 
+## Migrating from 1.x
+
+The interactive prompt was replaced by `next-pathmap init` and config file defaults. Options were renamed:
+
+| 1.x           | 2.x              | Notes                                                                                            |
+| ------------- | ---------------- | ------------------------------------------------------------------------------------------------ |
+| `pathToPages` | `pagesDir`       | Optional now; detected like Next.js does.                                                        |
+| `pathToSave`  | `output`         |                                                                                                  |
+| `includes`    | `pageExtensions` | `["**/*.page.{ts,tsx}"]` becomes `["page.ts", "page.tsx"]`, matching `next.config.js`.           |
+| `excludes`    | `exclude`        | Drop the leading `!`. `_app`, `_document`, `_error` and `api` are skipped without configuration. |
+| `schema`      | `defaults`       |                                                                                                  |
+
+The JSDoc type moved from `next-pathmap/config` to `next-pathmap`:
+
+```diff
+- /** @type {import('next-pathmap/config').PathmapConfig} */
++ /** @type {import('next-pathmap').PathmapConfig} */
+```
+
+Node.js 14 is no longer supported.
+
 ## Contributing
 
 Bug reports and pull requests are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md).
