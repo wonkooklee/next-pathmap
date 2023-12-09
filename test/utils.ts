@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach } from "vitest";
@@ -14,7 +14,9 @@ afterEach(async () => {
 export async function createProject(
   files: Record<string, string>
 ): Promise<string> {
-  const root = await mkdtemp(join(tmpdir(), "next-pathmap-"));
+  // Windows may hand out an 8.3 short path (RUNNER~1) that vite-node cannot
+  // import once Node.js 20+ encodes the "~" in its file URL.
+  const root = await realpath(await mkdtemp(join(tmpdir(), "next-pathmap-")));
   projects.push(root);
 
   await Promise.all(
