@@ -1,6 +1,6 @@
 {
   "name": "next-pathmap",
-  "version": "1.1.29",
+  "version": "2.0.0",
   "description": "Generate a JSON map of every route in a Next.js project",
   "keywords": [
     "next",

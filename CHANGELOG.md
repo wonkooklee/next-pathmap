@@ -4,6 +4,8 @@ All notable changes to this project are documented in this file. The format is b
 
 ## Unreleased
 
+## 2.0.0 - 2026-10-04
+
 ### Breaking changes
 
 - Config options were renamed: `pathToPages` → `pagesDir`, `pathToSave` → `output`, `includes` → `pageExtensions`, `excludes` → `exclude`, `schema` → `defaults`. Using an old name fails with a message that names its replacement.
