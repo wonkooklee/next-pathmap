@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "cac": "^6.7.14",
-    "globby": "^13.1.4",
+    "globby": "^16.2.4",
     "picocolors": "^1.0.0",
     "zod": "^3.21.4"
   },
