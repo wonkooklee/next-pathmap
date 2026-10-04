@@ -57,7 +57,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "cac": "^6.7.14",
+    "cac": "^7.0.0",
     "globby": "^13.1.4",
     "picocolors": "^1.0.0",
     "zod": "^3.21.4"
